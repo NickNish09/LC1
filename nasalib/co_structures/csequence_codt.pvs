@@ -1,0 +1,289 @@
+%%% ADT file generated from csequence
+
+csequence_codt[T: TYPE]: THEORY
+ BEGIN
+
+  csequence: TYPE
+
+  empty?, nonempty?: [csequence -> boolean]
+
+  first: [(nonempty?) -> T]
+
+  rest: [(nonempty?) -> csequence]
+
+  empty_cseq: (empty?)
+
+  add: [[T, csequence] -> (nonempty?)]
+
+  csequence_ord: [csequence -> upto(1)]
+
+  csequence_ord_defaxiom: AXIOM
+    csequence_ord(empty_cseq) = 0 AND
+     (FORALL (first: T, rest: csequence):
+        csequence_ord(add(first, rest)) = 1);
+
+  ord(x: csequence): [csequence -> upto(1)] =
+      CASES x OF empty_cseq: 0, add(add1_var, add2_var): 1 ENDCASES
+
+  csequence_empty_cseq_extensionality: AXIOM
+    FORALL (empty?_var: (empty?), empty?_var2: (empty?)):
+      empty?_var = empty?_var2;
+
+  csequence_add_extensionality: AXIOM
+    FORALL (nonempty?_var: (nonempty?), nonempty?_var2: (nonempty?)):
+      first(nonempty?_var) = first(nonempty?_var2) AND
+       rest(nonempty?_var) = rest(nonempty?_var2)
+       IMPLIES nonempty?_var = nonempty?_var2;
+
+  csequence_add_eta: AXIOM
+    FORALL (nonempty?_var: (nonempty?)):
+      add(first(nonempty?_var), rest(nonempty?_var)) = nonempty?_var;
+
+  csequence_first_add: AXIOM
+    FORALL (add1_var: T, add2_var: csequence):
+      first(add(add1_var, add2_var)) = add1_var;
+
+  csequence_rest_add: AXIOM
+    FORALL (add1_var: T, add2_var: csequence):
+      rest(add(add1_var, add2_var)) = add2_var;
+
+  csequence_inclusive: AXIOM
+    FORALL (csequence_var: csequence):
+      empty?(csequence_var) OR nonempty?(csequence_var);
+
+  bisimulation?(R: PRED[[csequence, csequence]]):  boolean =
+      FORALL (x: csequence, y: csequence):
+        R(x, y) IMPLIES
+         empty?(x) AND empty?(y) OR
+          nonempty?(x) AND
+           nonempty?(y) AND first(x) = first(y) AND R(rest(x), rest(y));
+
+  coinduction: AXIOM
+    FORALL (B: (bisimulation?), x: csequence, y: csequence):
+      B(x, y) => x = y;
+
+  every(p: PRED[T])(a: csequence):  COINDUCTIVE boolean =
+        CASES a
+          OF empty_cseq: TRUE,
+             add(add1_var, add2_var): p(add1_var) AND every(p)(add2_var)
+          ENDCASES;
+
+  every_weak_coinduction: AXIOM
+    FORALL (p: PRED[T], P: [csequence -> boolean]):
+      (FORALL (a: csequence):
+         P(a) IMPLIES
+          CASES a
+            OF empty_cseq: TRUE,
+               add(add1_var, add2_var): p(add1_var) AND P(add2_var)
+            ENDCASES)
+       IMPLIES (FORALL (a: csequence): P(a) IMPLIES every(p)(a));
+
+  every_coinduction: AXIOM
+    FORALL (p: PRED[T], P: [csequence -> boolean]):
+      (FORALL (a: csequence):
+         P(a) IMPLIES
+          CASES a
+            OF empty_cseq: TRUE,
+               add(add1_var, add2_var):
+                 p(add1_var) AND (every(p)(add2_var) OR P(add2_var))
+            ENDCASES)
+       IMPLIES (FORALL (a: csequence): P(a) IMPLIES every(p)(a));
+
+  some(p: PRED[T])(a: csequence):  INDUCTIVE boolean =
+        CASES a
+          OF empty_cseq: FALSE,
+             add(add1_var, add2_var): p(add1_var) OR some(p)(add2_var)
+          ENDCASES;
+
+  some_weak_induction: AXIOM
+    FORALL (p: PRED[T], P: [csequence -> boolean]):
+      (FORALL (a: csequence):
+         CASES a
+           OF empty_cseq: FALSE,
+              add(add1_var, add2_var): p(add1_var) OR P(add2_var)
+           ENDCASES
+          IMPLIES P(a))
+       IMPLIES (FORALL (a: csequence): some(p)(a) IMPLIES P(a));
+
+  some_induction: AXIOM
+    FORALL (p: PRED[T], P: [csequence -> boolean]):
+      (FORALL (a: csequence):
+         CASES a
+           OF empty_cseq: FALSE,
+              add(add1_var, add2_var):
+                p(add1_var) OR some(p)(add2_var) AND P(add2_var)
+           ENDCASES
+          IMPLIES P(a))
+       IMPLIES (FORALL (a: csequence): some(p)(a) IMPLIES P(a));
+ END csequence_codt
+
+csequence_codt_map[T: TYPE, T1: TYPE]: THEORY
+ BEGIN
+
+  IMPORTING csequence_codt
+
+  map(f: [T -> T1])(a: csequence[T]):  csequence[T1] =
+      CASES a
+        OF empty_cseq: empty_cseq,
+           add(add1_var, add2_var): add(f(add1_var), map(f)(add2_var))
+        ENDCASES;
+
+  map(f: [T -> T1], a: csequence[T]):  csequence[T1] =
+      CASES a
+        OF empty_cseq: empty_cseq,
+           add(add1_var, add2_var): add(f(add1_var), map(f, add2_var))
+        ENDCASES;
+
+  every(R: [[T, T1] -> boolean])(x: csequence[T], y: csequence[T1]):
+        boolean =
+      empty?(x) AND empty?(y) OR
+       nonempty?(x) AND
+        nonempty?(y) AND
+         R(first(x), first(y)) AND every(R)(rest(x), rest(y));
+ END csequence_codt_map
+
+csequence_codt_coreduce[T: TYPE, domain: TYPE]: THEORY
+ BEGIN
+
+  IMPORTING csequence_codt[T]
+
+  csequence_struct: DATATYPE
+   BEGIN
+    inj_empty_cseq: inj_empty?
+    inj_add(inj_first: T, inj_rest: domain): inj_nonempty?
+   END csequence_struct
+
+  csequence_struct: TYPE
+
+  inj_empty?, inj_nonempty?: [csequence_struct -> boolean]
+
+  inj_first: [(inj_nonempty?) -> T]
+
+  inj_rest: [(inj_nonempty?) -> domain]
+
+  inj_empty_cseq: (inj_empty?)
+
+  inj_add: [[T, domain] -> (inj_nonempty?)]
+
+  csequence_struct_ord: [csequence_struct -> upto(1)]
+
+  csequence_struct_ord_defaxiom: AXIOM
+    csequence_struct_ord(inj_empty_cseq) = 0 AND
+     (FORALL (inj_first: T, inj_rest: domain):
+        csequence_struct_ord(inj_add(inj_first, inj_rest)) = 1);
+
+  ord(x: csequence_struct): [csequence_struct -> upto(1)] =
+      CASES x OF inj_empty_cseq: 0, inj_add(inj_add1_var, inj_add2_var): 1
+        ENDCASES
+
+  csequence_struct_inj_empty_cseq_extensionality: AXIOM
+    FORALL (inj_empty?_var: (inj_empty?), inj_empty?_var2: (inj_empty?)):
+      inj_empty?_var = inj_empty?_var2;
+
+  csequence_struct_inj_add_extensionality: AXIOM
+    FORALL (inj_nonempty?_var: (inj_nonempty?),
+            inj_nonempty?_var2: (inj_nonempty?)):
+      inj_first(inj_nonempty?_var) = inj_first(inj_nonempty?_var2) AND
+       inj_rest(inj_nonempty?_var) = inj_rest(inj_nonempty?_var2)
+       IMPLIES inj_nonempty?_var = inj_nonempty?_var2;
+
+  csequence_struct_inj_add_eta: AXIOM
+    FORALL (inj_nonempty?_var: (inj_nonempty?)):
+      inj_add(inj_first(inj_nonempty?_var), inj_rest(inj_nonempty?_var)) =
+       inj_nonempty?_var;
+
+  csequence_struct_inj_first_inj_add: AXIOM
+    FORALL (inj_add1_var: T, inj_add2_var: domain):
+      inj_first(inj_add(inj_add1_var, inj_add2_var)) = inj_add1_var;
+
+  csequence_struct_inj_rest_inj_add: AXIOM
+    FORALL (inj_add1_var: T, inj_add2_var: domain):
+      inj_rest(inj_add(inj_add1_var, inj_add2_var)) = inj_add2_var;
+
+  csequence_struct_inclusive: AXIOM
+    FORALL (csequence_struct_var: csequence_struct):
+      inj_empty?(csequence_struct_var) OR
+       inj_nonempty?(csequence_struct_var);
+
+  csequence_struct_induction: AXIOM
+    FORALL (p: [csequence_struct -> boolean]):
+      (p(inj_empty_cseq) AND
+        (FORALL (inj_add1_var: T, inj_add2_var: domain):
+           p(inj_add(inj_add1_var, inj_add2_var))))
+       IMPLIES
+       (FORALL (csequence_struct_var: csequence_struct):
+          p(csequence_struct_var));
+
+  subterm(x: csequence_struct, y: csequence_struct):  boolean = x = y;
+
+  <<:  (strict_well_founded?[csequence_struct]) =
+      LAMBDA (x, y: csequence_struct): FALSE;
+
+  csequence_struct_well_founded: AXIOM
+    strict_well_founded?[csequence_struct](<<);
+
+  reduce_nat(inj_empty?_fun: nat,
+             inj_nonempty?_fun: [[T, domain] -> nat]):
+        [csequence_struct -> nat] =
+      LAMBDA (csequence_struct_adtvar: csequence_struct):
+        LET red: [csequence_struct -> nat] =
+              reduce_nat(inj_empty?_fun, inj_nonempty?_fun)
+          IN
+          CASES csequence_struct_adtvar
+            OF inj_empty_cseq: inj_empty?_fun,
+               inj_add(inj_add1_var, inj_add2_var):
+                 inj_nonempty?_fun(inj_add1_var, inj_add2_var)
+            ENDCASES;
+
+  REDUCE_nat(inj_empty?_fun: [csequence_struct -> nat],
+             inj_nonempty?_fun: [[T, domain, csequence_struct] -> nat]):
+        [csequence_struct -> nat] =
+      LAMBDA (csequence_struct_adtvar: csequence_struct):
+        LET red: [csequence_struct -> nat] =
+              REDUCE_nat(inj_empty?_fun, inj_nonempty?_fun)
+          IN
+          CASES csequence_struct_adtvar
+            OF inj_empty_cseq: inj_empty?_fun(csequence_struct_adtvar),
+               inj_add(inj_add1_var, inj_add2_var):
+                 inj_nonempty?_fun(inj_add1_var, inj_add2_var,
+                                   csequence_struct_adtvar)
+            ENDCASES;
+
+  reduce_ordinal(inj_empty?_fun: ordinal,
+                 inj_nonempty?_fun: [[T, domain] -> ordinal]):
+        [csequence_struct -> ordinal] =
+      LAMBDA (csequence_struct_adtvar: csequence_struct):
+        LET red: [csequence_struct -> ordinal] =
+              reduce_ordinal(inj_empty?_fun, inj_nonempty?_fun)
+          IN
+          CASES csequence_struct_adtvar
+            OF inj_empty_cseq: inj_empty?_fun,
+               inj_add(inj_add1_var, inj_add2_var):
+                 inj_nonempty?_fun(inj_add1_var, inj_add2_var)
+            ENDCASES;
+
+  REDUCE_ordinal(inj_empty?_fun: [csequence_struct -> ordinal],
+                 inj_nonempty?_fun:
+                   [[T, domain, csequence_struct] -> ordinal]):
+        [csequence_struct -> ordinal] =
+      LAMBDA (csequence_struct_adtvar: csequence_struct):
+        LET red: [csequence_struct -> ordinal] =
+              REDUCE_ordinal(inj_empty?_fun, inj_nonempty?_fun)
+          IN
+          CASES csequence_struct_adtvar
+            OF inj_empty_cseq: inj_empty?_fun(csequence_struct_adtvar),
+               inj_add(inj_add1_var, inj_add2_var):
+                 inj_nonempty?_fun(inj_add1_var, inj_add2_var,
+                                   csequence_struct_adtvar)
+            ENDCASES;
+
+  coreduce(op: [domain -> csequence_struct])(x: domain):
+        {c: csequence[T] |
+                 inj_empty?(op(x)) AND empty?(c) OR
+                  inj_nonempty?(op(x)) AND nonempty?(c)} =
+      CASES op(x)
+        OF inj_empty_cseq: empty_cseq,
+           inj_add(inj_add1_var, inj_add2_var):
+             add(inj_add1_var, coreduce(op)(inj_add2_var))
+        ENDCASES;
+ END csequence_codt_coreduce

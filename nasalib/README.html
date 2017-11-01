@@ -1,0 +1,14 @@
+<h1 id="nasa-pvs-library"><a href="http://shemesh.larc.nasa.gov/fm/ftp/larc/PVS-library">NASA PVS Library</a></h1>
+<h2 id="installation-notes---nasa-pvs-library-6.0.9-111014">Installation Notes - NASA PVS Library 6.0.9 (11/10/14)</h2>
+<p>These instructions assume that PVS 6.0 is installed in the directory <code>&lt;pvsdir&gt;</code>, i.e., in the instructions below replace <code>&lt;pvsdir&gt;</code> by the absolute path where PVS is installed.</p>
+<p>Put the NASA PVS Library in the subdirectory <code>&lt;pvsdir&gt;/nasalib</code> and set the environment variable <code>PVS_LIBRARY_PATH</code> such that it point to this directory. Depending upon your shell, put one of the following lines in your startup script. In C shell (csh or tcsh), put this line in <code>~/.cshrc</code>:</p>
+<pre><code>setenv PVS_LIBRARY_PATH &quot;&lt;pvsdir&gt;/nasalib&quot;</code></pre>
+<p>In Borne shell (bash or sh), put this line in either <code>~/.bashrc or ~/.profile</code>:</p>
+<pre><code>export PVS_LIBRARY_PATH=&quot;&lt;pvsdir&gt;/nasalib&quot;</code></pre>
+<p>If you had a previous installation of the NASA PVS Library, either remove the file <code>~/.pvs.lisp</code> or, if you have a special configuration in that file, remove the following line</p>
+<pre><code>(load &quot;&lt;pvsdir&gt;/nasalib/pvs-patches.lisp&quot;) </code></pre>
+<p>Finally, go to the directory <code>&lt;pvsdir&gt;/nasalib</code> and run the shell script</p>
+<pre><code>&lt;pvsdir&gt;/nasalib$./install-scripts</code></pre>
+<p>For more information visit the <a href="http://shemesh.larc.nasa.gov/fm/ftp/larc/PVS-library/installation.html">installation</a> page. For PVS developers and contributors, the development version of the NASA PVS Library is available at <a href="https://github.com/nasa/pvslib">GitHub</a>.</p>
+<p>Enjoy it.</p>
+<p><a href="http://shemesh.larc.nasa.gov/fm">The NASA Langley Formal Methods Team</a></p>

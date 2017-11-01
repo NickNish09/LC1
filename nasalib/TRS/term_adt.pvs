@@ -1,0 +1,344 @@
+%%% ADT file generated from term
+
+term_adt[variable: TYPE+, symbol: TYPE+, arity: [symbol -> nat]]: THEORY
+ BEGIN
+  ASSUMING
+   variable_TCC1: ASSUMPTION EXISTS (x: variable): TRUE;
+
+   symbol_TCC1: ASSUMPTION EXISTS (x: symbol): TRUE;
+  ENDASSUMING
+
+  term: TYPE
+
+  vars?, app?: [term -> boolean]
+
+  v: [(vars?) -> variable]
+
+  f: [(app?) -> symbol]
+
+  args:
+        [d: (app?) ->
+           {args: finite_sequence[term] | args`length = arity(f(d))}]
+
+  vars: [variable -> (vars?)]
+
+  app:
+        [[f: symbol,
+          {args: finite_sequence[term] | args`length = arity(f)}] ->
+           (app?)]
+
+  term_ord: [term -> upto(1)]
+
+  term_ord_defaxiom: AXIOM
+    (FORALL (v: variable): term_ord(vars(v)) = 0) AND
+     (FORALL (f: symbol,
+              args:
+                {args: finite_sequence[term] | args`length = arity(f)}):
+        term_ord(app(f, args)) = 1);
+
+  ord(x: term): [term -> upto(1)] =
+      CASES x OF vars(vars1_var): 0, app(app1_var, app2_var): 1 ENDCASES
+
+  term_vars_extensionality: AXIOM
+    FORALL (vars?_var: (vars?), vars?_var2: (vars?)):
+      v(vars?_var) = v(vars?_var2) IMPLIES vars?_var = vars?_var2;
+
+  term_vars_eta: AXIOM
+    FORALL (vars?_var: (vars?)): vars(v(vars?_var)) = vars?_var;
+
+  term_app_extensionality: AXIOM
+    FORALL (app?_var: (app?), app?_var2: (app?)):
+      f(app?_var) = f(app?_var2) AND args(app?_var) = args(app?_var2)
+       IMPLIES app?_var = app?_var2;
+
+  term_app_eta: AXIOM
+    FORALL (app?_var: (app?)): app(f(app?_var), args(app?_var)) = app?_var;
+
+  term_v_vars: AXIOM
+    FORALL (vars1_var: variable): v(vars(vars1_var)) = vars1_var;
+
+  term_f_app: AXIOM
+    FORALL (app1_var: symbol,
+            app2_var:
+              {args: finite_sequence[term] |
+                       args`length = arity(app1_var)}):
+      f(app(app1_var, app2_var)) = app1_var;
+
+  term_args_app: AXIOM
+    FORALL (app1_var: symbol,
+            app2_var:
+              {args: finite_sequence[term] |
+                       args`length = arity(app1_var)}):
+      args(app(app1_var, app2_var)) = app2_var;
+
+  term_inclusive: AXIOM
+    FORALL (term_var: term): vars?(term_var) OR app?(term_var);
+
+  term_induction: AXIOM
+    FORALL (p: [term -> boolean]):
+      ((FORALL (vars1_var: variable): p(vars(vars1_var))) AND
+        (FORALL (app1_var: symbol,
+                 app2_var:
+                   {args: finite_sequence[term] |
+                            args`length = arity(app1_var)}):
+           (FORALL (x: below[app2_var`length]): p(app2_var`seq(x))) IMPLIES
+            p(app(app1_var, app2_var))))
+       IMPLIES (FORALL (term_var: term): p(term_var));
+
+  every(p: PRED[variable])(a: term):  boolean =
+      CASES a
+        OF vars(vars1_var): p(vars1_var), app(app1_var, app2_var): TRUE
+        ENDCASES;
+
+  every(p: PRED[variable], a: term):  boolean =
+      CASES a
+        OF vars(vars1_var): p(vars1_var), app(app1_var, app2_var): TRUE
+        ENDCASES;
+
+  some(p: PRED[variable])(a: term):  boolean =
+      CASES a
+        OF vars(vars1_var): p(vars1_var), app(app1_var, app2_var): FALSE
+        ENDCASES;
+
+  some(p: PRED[variable], a: term):  boolean =
+      CASES a
+        OF vars(vars1_var): p(vars1_var), app(app1_var, app2_var): FALSE
+        ENDCASES;
+
+  subterm(x: term, y: term):  boolean =
+      x = y OR
+       CASES y
+         OF vars(vars1_var): FALSE,
+            app(app1_var, app2_var):
+              EXISTS (z: below[app2_var`length]):
+                subterm(x, seq(app2_var)(z))
+         ENDCASES;
+
+  <<:  (strict_well_founded?[term]) =
+      LAMBDA (x, y: term):
+        CASES y
+          OF vars(vars1_var): FALSE,
+             app(app1_var, app2_var):
+               EXISTS (z: below[app2_var`length]):
+                 subterm(x, seq(app2_var)(z))
+          ENDCASES;
+
+  term_well_founded: AXIOM strict_well_founded?[term](<<);
+
+  reduce_nat(vars?_fun: [variable -> nat],
+             app?_fun:
+               [[app1_var: symbol,
+                 {args: finite_sequence[nat] |
+                          args`length = arity(app1_var)}] ->
+                  nat]):
+        [term -> nat] =
+      LAMBDA (term_adtvar: term):
+        LET red: [term -> nat] = reduce_nat(vars?_fun, app?_fun) IN
+          CASES term_adtvar
+            OF vars(vars1_var): vars?_fun(vars1_var),
+               app(app1_var, app2_var):
+                 app?_fun(app1_var,
+                          (# length := length(app2_var),
+                             seq
+                               := (LAMBDA (a:
+                                           [below[app2_var`length] ->
+                                            term]):
+                                     LAMBDA
+                                     (x: below[app2_var`length]):
+                                     red(a(x)))
+                                      (seq(app2_var)) #))
+            ENDCASES;
+
+  REDUCE_nat(vars?_fun: [[variable, term] -> nat],
+             app?_fun:
+               [[app1_var: symbol,
+                 {args: finite_sequence[nat] |
+                          args`length = arity(app1_var)},
+                 term] ->
+                  nat]):
+        [term -> nat] =
+      LAMBDA (term_adtvar: term):
+        LET red: [term -> nat] = REDUCE_nat(vars?_fun, app?_fun) IN
+          CASES term_adtvar
+            OF vars(vars1_var): vars?_fun(vars1_var, term_adtvar),
+               app(app1_var, app2_var):
+                 app?_fun(app1_var,
+                          (# length := length(app2_var),
+                             seq
+                               := (LAMBDA (a:
+                                           [below[app2_var`length] ->
+                                            term]):
+                                     LAMBDA
+                                     (x: below[app2_var`length]):
+                                     red(a(x)))
+                                      (seq(app2_var)) #),
+                          term_adtvar)
+            ENDCASES;
+
+  reduce_ordinal(vars?_fun: [variable -> ordinal],
+                 app?_fun:
+                   [[app1_var: symbol,
+                     {args: finite_sequence[ordinal] |
+                              args`length = arity(app1_var)}] ->
+                      ordinal]):
+        [term -> ordinal] =
+      LAMBDA (term_adtvar: term):
+        LET red: [term -> ordinal] = reduce_ordinal(vars?_fun, app?_fun) IN
+          CASES term_adtvar
+            OF vars(vars1_var): vars?_fun(vars1_var),
+               app(app1_var, app2_var):
+                 app?_fun(app1_var,
+                          (# length := length(app2_var),
+                             seq
+                               := (LAMBDA (a:
+                                           [below[app2_var`length] ->
+                                            term]):
+                                     LAMBDA
+                                     (x: below[app2_var`length]):
+                                     red(a(x)))
+                                      (seq(app2_var)) #))
+            ENDCASES;
+
+  REDUCE_ordinal(vars?_fun: [[variable, term] -> ordinal],
+                 app?_fun:
+                   [[app1_var: symbol,
+                     {args: finite_sequence[ordinal] |
+                              args`length = arity(app1_var)},
+                     term] ->
+                      ordinal]):
+        [term -> ordinal] =
+      LAMBDA (term_adtvar: term):
+        LET red: [term -> ordinal] = REDUCE_ordinal(vars?_fun, app?_fun) IN
+          CASES term_adtvar
+            OF vars(vars1_var): vars?_fun(vars1_var, term_adtvar),
+               app(app1_var, app2_var):
+                 app?_fun(app1_var,
+                          (# length := length(app2_var),
+                             seq
+                               := (LAMBDA (a:
+                                           [below[app2_var`length] ->
+                                            term]):
+                                     LAMBDA
+                                     (x: below[app2_var`length]):
+                                     red(a(x)))
+                                      (seq(app2_var)) #),
+                          term_adtvar)
+            ENDCASES;
+ END term_adt
+
+term_adt_map[variable: TYPE+, symbol: TYPE+, arity: [symbol -> nat],
+             variable1: TYPE+]: THEORY
+ BEGIN
+  ASSUMING
+   variable_TCC1: ASSUMPTION EXISTS (x: variable): TRUE;
+
+   symbol_TCC1: ASSUMPTION EXISTS (x: symbol): TRUE;
+
+   variable1_TCC1: ASSUMPTION EXISTS (x: variable1): TRUE;
+  ENDASSUMING
+
+  IMPORTING term_adt
+
+  map(f1: [variable -> variable1])(a: term[variable, symbol, arity]):
+        term[variable1, symbol, arity] =
+      CASES a
+        OF vars(vars1_var): vars(f1(vars1_var)),
+           app(app1_var, app2_var):
+             app(app1_var,
+                 (# length := length(app2_var),
+                    seq
+                      := LAMBDA (x: below[app2_var`length]):
+                           map(f1)(seq(app2_var)(x)) #))
+        ENDCASES;
+
+  map(f1: [variable -> variable1], a: term[variable, symbol, arity]):
+        term[variable1, symbol, arity] =
+      CASES a
+        OF vars(vars1_var): vars(f1(vars1_var)),
+           app(app1_var, app2_var):
+             app(app1_var,
+                 (# length := length(app2_var),
+                    seq
+                      := LAMBDA (x: below[app2_var`length]):
+                           map(f1)(seq(app2_var)(x)) #))
+        ENDCASES;
+
+  every(R: [[variable, variable1] -> boolean])
+       (x: term[variable, symbol, arity],
+        y: term[variable1, symbol, arity]):
+        boolean =
+      vars?(x) AND vars?(y) AND R(v(x), v(y)) OR
+            app?(x) AND app?(y) AND f(x) = f(y)
+        AND args(x)`length = args(y)`length
+        AND (FORALL (z:
+                       {x1: nat |
+                                x1 < args(x)`length AND
+                                 x1 < args(y)`length}):
+               every(R)(args(x)`seq(z), args(y)`seq(z)));
+ END term_adt_map
+
+term_adt_reduce[variable: TYPE+, symbol: TYPE+, arity: [symbol -> nat],
+                range: TYPE]: THEORY
+ BEGIN
+  ASSUMING
+   variable_TCC1: ASSUMPTION EXISTS (x: variable): TRUE;
+
+   symbol_TCC1: ASSUMPTION EXISTS (x: symbol): TRUE;
+  ENDASSUMING
+
+  IMPORTING term_adt[variable, symbol, arity]
+
+  reduce(vars?_fun: [variable -> range],
+         app?_fun:
+           [[symbol,
+             {args: finite_sequence[range] | args`length = arity(f)}] ->
+              range]):
+        [term[variable, symbol, arity] -> range] =
+      LAMBDA (term_adtvar: term[variable, symbol, arity]):
+        LET red: [term[variable, symbol, arity] -> range] =
+              reduce(vars?_fun, app?_fun)
+          IN
+          CASES term_adtvar
+            OF vars(vars1_var): vars?_fun(vars1_var),
+               app(app1_var, app2_var):
+                 app?_fun(app1_var,
+                          (# length := length(app2_var),
+                             seq
+                               := (LAMBDA (a:
+                                           [below[app2_var`length] ->
+                                            term
+                                            [variable, symbol, arity]]):
+                                     LAMBDA
+                                     (x: below[app2_var`length]):
+                                     red(a(x)))
+                                      (seq(app2_var)) #))
+            ENDCASES;
+
+  REDUCE(vars?_fun: [[variable, term[variable, symbol, arity]] -> range],
+         app?_fun:
+           [[symbol,
+             {args: finite_sequence[range] | args`length = arity(f)},
+             term[variable, symbol, arity]] ->
+              range]):
+        [term[variable, symbol, arity] -> range] =
+      LAMBDA (term_adtvar: term[variable, symbol, arity]):
+        LET red: [term[variable, symbol, arity] -> range] =
+              REDUCE(vars?_fun, app?_fun)
+          IN
+          CASES term_adtvar
+            OF vars(vars1_var): vars?_fun(vars1_var, term_adtvar),
+               app(app1_var, app2_var):
+                 app?_fun(app1_var,
+                          (# length := length(app2_var),
+                             seq
+                               := (LAMBDA (a:
+                                           [below[app2_var`length] ->
+                                            term
+                                            [variable, symbol, arity]]):
+                                     LAMBDA
+                                     (x: below[app2_var`length]):
+                                     red(a(x)))
+                                      (seq(app2_var)) #),
+                          term_adtvar)
+            ENDCASES;
+ END term_adt_reduce

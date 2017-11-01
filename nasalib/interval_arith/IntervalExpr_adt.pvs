@@ -1,0 +1,1316 @@
+%%% ADT file generated from IntervalExpr
+
+IntervalExpr_adt: THEORY
+ BEGIN
+
+  IntervalExpr: TYPE
+
+  IMPORTING interval
+
+  IMPORTING structures@Unit
+
+  IMPORTING reals@real_orders
+
+  const?, varidx?, add?, abs?, neg?, sub?, mult?, sq?, pow?, div?, fun?,
+  letin?, bconst?, bnot?, band?, bor?, bimplies?, brel?, bincludes?, bite?,
+  bletin?: [IntervalExpr -> boolean]
+
+  RealExpr(x: IntervalExpr):  boolean =
+          const?(x) OR varidx?(x) OR add?(x) OR abs?(x) OR neg?(x)
+       OR sub?(x) OR mult?(x) OR sq?(x) OR pow?(x) OR div?(x) OR fun?(x)
+       OR letin?(x);
+
+  RealExpr: TYPE =
+        {x: IntervalExpr |
+                     const?(x) OR varidx?(x) OR add?(x) OR abs?(x)
+                  OR neg?(x) OR sub?(x) OR mult?(x) OR sq?(x) OR pow?(x)
+                  OR div?(x) OR fun?(x) OR letin?(x)}
+
+  BoolExpr(x: IntervalExpr):  boolean =
+          bconst?(x) OR bnot?(x) OR band?(x) OR bor?(x) OR bimplies?(x)
+       OR brel?(x) OR bincludes?(x) OR bite?(x) OR bletin?(x);
+
+  BoolExpr: TYPE =
+        {x: IntervalExpr |
+                     bconst?(x) OR bnot?(x) OR band?(x) OR bor?(x)
+                  OR bimplies?(x) OR brel?(x) OR bincludes?(x) OR bite?(x)
+                  OR bletin?(x)}
+
+  JUDGEMENT (const?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (varidx?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (add?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (abs?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (neg?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (sub?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (mult?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (sq?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (pow?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (div?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (fun?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (letin?) SUBTYPE_OF RealExpr
+
+  JUDGEMENT (bconst?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (bnot?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (band?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (bor?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (bimplies?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (brel?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (bincludes?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (bite?) SUBTYPE_OF BoolExpr
+
+  JUDGEMENT (bletin?) SUBTYPE_OF BoolExpr
+
+  opc: [(const?) -> [Unit -> real]]
+
+  opC: [d: (const?) -> (Includes?(opc(d)(unit)))]
+
+  varidx: [(varidx?) -> nat]
+
+  op1:
+        [{x: IntervalExpr |
+                      brel?(x) OR div?(x) OR mult?(x) OR sub?(x)
+                   OR add?(x)} ->
+           RealExpr]
+
+  op2:
+        [{x: IntervalExpr |
+                      brel?(x) OR div?(x) OR mult?(x) OR sub?(x)
+                   OR add?(x)} ->
+           RealExpr]
+
+  op:
+        [{x: IntervalExpr |
+                      bincludes?(x) OR fun?(x) OR pow?(x) OR sq?(x)
+                   OR neg?(x) OR abs?(x)} ->
+           RealExpr]
+
+  opn: [(pow?) -> nat]
+
+  pre: [(fun?) -> (Precondition?)]
+
+  opf: [(fun?) -> [real -> real]]
+
+  opF:
+        [d: (fun?) ->
+           {F: [Interval -> Interval] |
+                    Inclusion?(pre(d), opf(d))(F) AND
+                     Fundamental?(pre(d))(F)}]
+
+  rlet: [(letin?) -> RealExpr]
+
+  rin: [(letin?) -> RealExpr]
+
+  opb: [(bconst?) -> boolean]
+
+  bop: [(bnot?) -> BoolExpr]
+
+  bop1:
+        [{x: IntervalExpr | bimplies?(x) OR bor?(x) OR band?(x)} ->
+           BoolExpr]
+
+  bop2:
+        [{x: IntervalExpr | bimplies?(x) OR bor?(x) OR band?(x)} ->
+           BoolExpr]
+
+  rel: [(brel?) -> RealOrder]
+
+  opi: [(bincludes?) -> Interval]
+
+  bif: [(bite?) -> BoolExpr]
+
+  bthen: [(bite?) -> BoolExpr]
+
+  belse: [(bite?) -> BoolExpr]
+
+  blet: [(bletin?) -> IntervalExpr]
+
+  bin: [(bletin?) -> BoolExpr]
+
+  CONST: [[opc: [Unit -> real], (Includes?(opc(unit)))] -> (const?)]
+
+  VARIDX: [nat -> (varidx?)]
+
+  ADD: [[RealExpr, RealExpr] -> (add?)]
+
+  ABS: [RealExpr -> (abs?)]
+
+  NEG: [RealExpr -> (neg?)]
+
+  SUB: [[RealExpr, RealExpr] -> (sub?)]
+
+  MULT: [[RealExpr, RealExpr] -> (mult?)]
+
+  SQ: [RealExpr -> (sq?)]
+
+  POW: [[RealExpr, nat] -> (pow?)]
+
+  DIV: [[RealExpr, RealExpr] -> (div?)]
+
+  FUN:
+        [[pre: (Precondition?), opf: [real -> real],
+          {F: [Interval -> Interval] |
+                   Inclusion?(pre, opf)(F) AND Fundamental?(pre)(F)},
+          RealExpr] ->
+           (fun?)]
+
+  LETIN: [[RealExpr, RealExpr] -> (letin?)]
+
+  BCONST: [boolean -> (bconst?)]
+
+  BNOT: [BoolExpr -> (bnot?)]
+
+  BAND: [[BoolExpr, BoolExpr] -> (band?)]
+
+  BOR: [[BoolExpr, BoolExpr] -> (bor?)]
+
+  BIMPLIES: [[BoolExpr, BoolExpr] -> (bimplies?)]
+
+  BREL: [[RealOrder, RealExpr, RealExpr] -> (brel?)]
+
+  BINCLUDES: [[RealExpr, Interval] -> (bincludes?)]
+
+  BITE: [[BoolExpr, BoolExpr, BoolExpr] -> (bite?)]
+
+  BLETIN: [[IntervalExpr, BoolExpr] -> (bletin?)]
+
+  IntervalExpr_ord: [IntervalExpr -> upto(20)]
+
+  IntervalExpr_ord_defaxiom: AXIOM
+         (FORALL (opc: [Unit -> real], opC: (Includes?(opc(unit)))):
+            IntervalExpr_ord(CONST(opc, opC)) = 0)
+     AND (FORALL (varidx: nat): IntervalExpr_ord(VARIDX(varidx)) = 1)
+     AND (FORALL (op1: RealExpr, op2: RealExpr):
+            IntervalExpr_ord(ADD(op1, op2)) = 2)
+     AND (FORALL (op: RealExpr): IntervalExpr_ord(ABS(op)) = 3)
+     AND (FORALL (op: RealExpr): IntervalExpr_ord(NEG(op)) = 4)
+     AND (FORALL (op1: RealExpr, op2: RealExpr):
+            IntervalExpr_ord(SUB(op1, op2)) = 5)
+     AND (FORALL (op1: RealExpr, op2: RealExpr):
+            IntervalExpr_ord(MULT(op1, op2)) = 6)
+     AND (FORALL (op: RealExpr): IntervalExpr_ord(SQ(op)) = 7)
+     AND (FORALL (op: RealExpr, opn: nat):
+            IntervalExpr_ord(POW(op, opn)) = 8)
+     AND (FORALL (op1: RealExpr, op2: RealExpr):
+            IntervalExpr_ord(DIV(op1, op2)) = 9)
+     AND (FORALL (pre: (Precondition?), opf: [real -> real],
+                  opF:
+                    {F: [Interval -> Interval] |
+                             Inclusion?(pre, opf)(F) AND
+                              Fundamental?(pre)(F)},
+                  op: RealExpr):
+            IntervalExpr_ord(FUN(pre, opf, opF, op)) = 10)
+     AND (FORALL (rlet: RealExpr, rin: RealExpr):
+            IntervalExpr_ord(LETIN(rlet, rin)) = 11)
+     AND (FORALL (opb: bool): IntervalExpr_ord(BCONST(opb)) = 12)
+     AND (FORALL (bop: BoolExpr): IntervalExpr_ord(BNOT(bop)) = 13)
+     AND (FORALL (bop1: BoolExpr, bop2: BoolExpr):
+            IntervalExpr_ord(BAND(bop1, bop2)) = 14)
+     AND (FORALL (bop1: BoolExpr, bop2: BoolExpr):
+            IntervalExpr_ord(BOR(bop1, bop2)) = 15)
+     AND (FORALL (bop1: BoolExpr, bop2: BoolExpr):
+            IntervalExpr_ord(BIMPLIES(bop1, bop2)) = 16)
+     AND (FORALL (rel: RealOrder, op1: RealExpr, op2: RealExpr):
+            IntervalExpr_ord(BREL(rel, op1, op2)) = 17)
+     AND (FORALL (op: RealExpr, opi: Interval):
+            IntervalExpr_ord(BINCLUDES(op, opi)) = 18)
+     AND (FORALL (bif: BoolExpr, bthen: BoolExpr, belse: BoolExpr):
+            IntervalExpr_ord(BITE(bif, bthen, belse)) = 19)
+     AND (FORALL (blet: IntervalExpr, bin: BoolExpr):
+            IntervalExpr_ord(BLETIN(blet, bin)) = 20);
+
+  ord(x: IntervalExpr): [IntervalExpr -> upto(20)] =
+      CASES x
+        OF CONST(CONST1_var, CONST2_var): 0,
+           VARIDX(VARIDX1_var): 1,
+           ADD(ADD1_var, ADD2_var): 2,
+           ABS(ABS1_var): 3,
+           NEG(NEG1_var): 4,
+           SUB(SUB1_var, SUB2_var): 5,
+           MULT(MULT1_var, MULT2_var): 6,
+           SQ(SQ1_var): 7,
+           POW(POW1_var, POW2_var): 8,
+           DIV(DIV1_var, DIV2_var): 9,
+           FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var): 10,
+           LETIN(LETIN1_var, LETIN2_var): 11,
+           BCONST(BCONST1_var): 12,
+           BNOT(BNOT1_var): 13,
+           BAND(BAND1_var, BAND2_var): 14,
+           BOR(BOR1_var, BOR2_var): 15,
+           BIMPLIES(BIMPLIES1_var, BIMPLIES2_var): 16,
+           BREL(BREL1_var, BREL2_var, BREL3_var): 17,
+           BINCLUDES(BINCLUDES1_var, BINCLUDES2_var): 18,
+           BITE(BITE1_var, BITE2_var, BITE3_var): 19,
+           BLETIN(BLETIN1_var, BLETIN2_var): 20
+        ENDCASES
+
+  IntervalExpr_CONST_extensionality: AXIOM
+    FORALL (const?_var: (const?), const?_var2: (const?)):
+      opc(const?_var) = opc(const?_var2) AND
+       opC(const?_var) = opC(const?_var2)
+       IMPLIES const?_var = const?_var2;
+
+  IntervalExpr_CONST_eta: AXIOM
+    FORALL (const?_var: (const?)):
+      CONST(opc(const?_var), opC(const?_var)) = const?_var;
+
+  IntervalExpr_VARIDX_extensionality: AXIOM
+    FORALL (varidx?_var: (varidx?), varidx?_var2: (varidx?)):
+      varidx(varidx?_var) = varidx(varidx?_var2) IMPLIES
+       varidx?_var = varidx?_var2;
+
+  IntervalExpr_VARIDX_eta: AXIOM
+    FORALL (varidx?_var: (varidx?)):
+      VARIDX(varidx(varidx?_var)) = varidx?_var;
+
+  IntervalExpr_ADD_extensionality: AXIOM
+    FORALL (add?_var: (add?), add?_var2: (add?)):
+      op1(add?_var) = op1(add?_var2) AND op2(add?_var) = op2(add?_var2)
+       IMPLIES add?_var = add?_var2;
+
+  IntervalExpr_ADD_eta: AXIOM
+    FORALL (add?_var: (add?)): ADD(op1(add?_var), op2(add?_var)) = add?_var;
+
+  IntervalExpr_ABS_extensionality: AXIOM
+    FORALL (abs?_var: (abs?), abs?_var2: (abs?)):
+      op(abs?_var) = op(abs?_var2) IMPLIES abs?_var = abs?_var2;
+
+  IntervalExpr_ABS_eta: AXIOM
+    FORALL (abs?_var: (abs?)): ABS(op(abs?_var)) = abs?_var;
+
+  IntervalExpr_NEG_extensionality: AXIOM
+    FORALL (neg?_var: (neg?), neg?_var2: (neg?)):
+      op(neg?_var) = op(neg?_var2) IMPLIES neg?_var = neg?_var2;
+
+  IntervalExpr_NEG_eta: AXIOM
+    FORALL (neg?_var: (neg?)): NEG(op(neg?_var)) = neg?_var;
+
+  IntervalExpr_SUB_extensionality: AXIOM
+    FORALL (sub?_var: (sub?), sub?_var2: (sub?)):
+      op1(sub?_var) = op1(sub?_var2) AND op2(sub?_var) = op2(sub?_var2)
+       IMPLIES sub?_var = sub?_var2;
+
+  IntervalExpr_SUB_eta: AXIOM
+    FORALL (sub?_var: (sub?)): SUB(op1(sub?_var), op2(sub?_var)) = sub?_var;
+
+  IntervalExpr_MULT_extensionality: AXIOM
+    FORALL (mult?_var: (mult?), mult?_var2: (mult?)):
+      op1(mult?_var) = op1(mult?_var2) AND op2(mult?_var) = op2(mult?_var2)
+       IMPLIES mult?_var = mult?_var2;
+
+  IntervalExpr_MULT_eta: AXIOM
+    FORALL (mult?_var: (mult?)):
+      MULT(op1(mult?_var), op2(mult?_var)) = mult?_var;
+
+  IntervalExpr_SQ_extensionality: AXIOM
+    FORALL (sq?_var: (sq?), sq?_var2: (sq?)):
+      op(sq?_var) = op(sq?_var2) IMPLIES sq?_var = sq?_var2;
+
+  IntervalExpr_SQ_eta: AXIOM
+    FORALL (sq?_var: (sq?)): SQ(op(sq?_var)) = sq?_var;
+
+  IntervalExpr_POW_extensionality: AXIOM
+    FORALL (pow?_var: (pow?), pow?_var2: (pow?)):
+      op(pow?_var) = op(pow?_var2) AND opn(pow?_var) = opn(pow?_var2)
+       IMPLIES pow?_var = pow?_var2;
+
+  IntervalExpr_POW_eta: AXIOM
+    FORALL (pow?_var: (pow?)): POW(op(pow?_var), opn(pow?_var)) = pow?_var;
+
+  IntervalExpr_DIV_extensionality: AXIOM
+    FORALL (div?_var: (div?), div?_var2: (div?)):
+      op1(div?_var) = op1(div?_var2) AND op2(div?_var) = op2(div?_var2)
+       IMPLIES div?_var = div?_var2;
+
+  IntervalExpr_DIV_eta: AXIOM
+    FORALL (div?_var: (div?)): DIV(op1(div?_var), op2(div?_var)) = div?_var;
+
+  IntervalExpr_FUN_extensionality: AXIOM
+    FORALL (fun?_var: (fun?), fun?_var2: (fun?)):
+      pre(fun?_var) = pre(fun?_var2) AND
+       opf(fun?_var) = opf(fun?_var2) AND
+        opF(fun?_var) = opF(fun?_var2) AND op(fun?_var) = op(fun?_var2)
+       IMPLIES fun?_var = fun?_var2;
+
+  IntervalExpr_FUN_eta: AXIOM
+    FORALL (fun?_var: (fun?)):
+      FUN(pre(fun?_var), opf(fun?_var), opF(fun?_var), op(fun?_var)) =
+       fun?_var;
+
+  IntervalExpr_LETIN_extensionality: AXIOM
+    FORALL (letin?_var: (letin?), letin?_var2: (letin?)):
+      rlet(letin?_var) = rlet(letin?_var2) AND
+       rin(letin?_var) = rin(letin?_var2)
+       IMPLIES letin?_var = letin?_var2;
+
+  IntervalExpr_LETIN_eta: AXIOM
+    FORALL (letin?_var: (letin?)):
+      LETIN(rlet(letin?_var), rin(letin?_var)) = letin?_var;
+
+  IntervalExpr_BCONST_extensionality: AXIOM
+    FORALL (bconst?_var: (bconst?), bconst?_var2: (bconst?)):
+      opb(bconst?_var) = opb(bconst?_var2) IMPLIES
+       bconst?_var = bconst?_var2;
+
+  IntervalExpr_BCONST_eta: AXIOM
+    FORALL (bconst?_var: (bconst?)): BCONST(opb(bconst?_var)) = bconst?_var;
+
+  IntervalExpr_BNOT_extensionality: AXIOM
+    FORALL (bnot?_var: (bnot?), bnot?_var2: (bnot?)):
+      bop(bnot?_var) = bop(bnot?_var2) IMPLIES bnot?_var = bnot?_var2;
+
+  IntervalExpr_BNOT_eta: AXIOM
+    FORALL (bnot?_var: (bnot?)): BNOT(bop(bnot?_var)) = bnot?_var;
+
+  IntervalExpr_BAND_extensionality: AXIOM
+    FORALL (band?_var: (band?), band?_var2: (band?)):
+      bop1(band?_var) = bop1(band?_var2) AND
+       bop2(band?_var) = bop2(band?_var2)
+       IMPLIES band?_var = band?_var2;
+
+  IntervalExpr_BAND_eta: AXIOM
+    FORALL (band?_var: (band?)):
+      BAND(bop1(band?_var), bop2(band?_var)) = band?_var;
+
+  IntervalExpr_BOR_extensionality: AXIOM
+    FORALL (bor?_var: (bor?), bor?_var2: (bor?)):
+      bop1(bor?_var) = bop1(bor?_var2) AND bop2(bor?_var) = bop2(bor?_var2)
+       IMPLIES bor?_var = bor?_var2;
+
+  IntervalExpr_BOR_eta: AXIOM
+    FORALL (bor?_var: (bor?)):
+      BOR(bop1(bor?_var), bop2(bor?_var)) = bor?_var;
+
+  IntervalExpr_BIMPLIES_extensionality: AXIOM
+    FORALL (bimplies?_var: (bimplies?), bimplies?_var2: (bimplies?)):
+      bop1(bimplies?_var) = bop1(bimplies?_var2) AND
+       bop2(bimplies?_var) = bop2(bimplies?_var2)
+       IMPLIES bimplies?_var = bimplies?_var2;
+
+  IntervalExpr_BIMPLIES_eta: AXIOM
+    FORALL (bimplies?_var: (bimplies?)):
+      BIMPLIES(bop1(bimplies?_var), bop2(bimplies?_var)) = bimplies?_var;
+
+  IntervalExpr_BREL_extensionality: AXIOM
+    FORALL (brel?_var: (brel?), brel?_var2: (brel?)):
+      rel(brel?_var) = rel(brel?_var2) AND
+       op1(brel?_var) = op1(brel?_var2) AND
+        op2(brel?_var) = op2(brel?_var2)
+       IMPLIES brel?_var = brel?_var2;
+
+  IntervalExpr_BREL_eta: AXIOM
+    FORALL (brel?_var: (brel?)):
+      BREL(rel(brel?_var), op1(brel?_var), op2(brel?_var)) = brel?_var;
+
+  IntervalExpr_BINCLUDES_extensionality: AXIOM
+    FORALL (bincludes?_var: (bincludes?), bincludes?_var2: (bincludes?)):
+      op(bincludes?_var) = op(bincludes?_var2) AND
+       opi(bincludes?_var) = opi(bincludes?_var2)
+       IMPLIES bincludes?_var = bincludes?_var2;
+
+  IntervalExpr_BINCLUDES_eta: AXIOM
+    FORALL (bincludes?_var: (bincludes?)):
+      BINCLUDES(op(bincludes?_var), opi(bincludes?_var)) = bincludes?_var;
+
+  IntervalExpr_BITE_extensionality: AXIOM
+    FORALL (bite?_var: (bite?), bite?_var2: (bite?)):
+      bif(bite?_var) = bif(bite?_var2) AND
+       bthen(bite?_var) = bthen(bite?_var2) AND
+        belse(bite?_var) = belse(bite?_var2)
+       IMPLIES bite?_var = bite?_var2;
+
+  IntervalExpr_BITE_eta: AXIOM
+    FORALL (bite?_var: (bite?)):
+      BITE(bif(bite?_var), bthen(bite?_var), belse(bite?_var)) = bite?_var;
+
+  IntervalExpr_BLETIN_extensionality: AXIOM
+    FORALL (bletin?_var: (bletin?), bletin?_var2: (bletin?)):
+      blet(bletin?_var) = blet(bletin?_var2) AND
+       bin(bletin?_var) = bin(bletin?_var2)
+       IMPLIES bletin?_var = bletin?_var2;
+
+  IntervalExpr_BLETIN_eta: AXIOM
+    FORALL (bletin?_var: (bletin?)):
+      BLETIN(blet(bletin?_var), bin(bletin?_var)) = bletin?_var;
+
+  IntervalExpr_opc_CONST: AXIOM
+    FORALL (CONST1_var: [Unit -> real],
+            CONST2_var: (Includes?(CONST1_var(unit)))):
+      opc(CONST(CONST1_var, CONST2_var)) = CONST1_var;
+
+  IntervalExpr_opC_CONST: AXIOM
+    FORALL (CONST1_var: [Unit -> real],
+            CONST2_var: (Includes?(CONST1_var(unit)))):
+      opC(CONST(CONST1_var, CONST2_var)) = CONST2_var;
+
+  IntervalExpr_varidx_VARIDX: AXIOM
+    FORALL (VARIDX1_var: nat): varidx(VARIDX(VARIDX1_var)) = VARIDX1_var;
+
+  IntervalExpr_op1_ADD: AXIOM
+    FORALL (ADD1_var: RealExpr, ADD2_var: RealExpr):
+      op1(ADD(ADD1_var, ADD2_var)) = ADD1_var;
+
+  IntervalExpr_op2_ADD: AXIOM
+    FORALL (ADD1_var: RealExpr, ADD2_var: RealExpr):
+      op2(ADD(ADD1_var, ADD2_var)) = ADD2_var;
+
+  IntervalExpr_op_ABS: AXIOM
+    FORALL (ABS1_var: RealExpr): op(ABS(ABS1_var)) = ABS1_var;
+
+  IntervalExpr_op_NEG: AXIOM
+    FORALL (NEG1_var: RealExpr): op(NEG(NEG1_var)) = NEG1_var;
+
+  IntervalExpr_op1_SUB: AXIOM
+    FORALL (SUB1_var: RealExpr, SUB2_var: RealExpr):
+      op1(SUB(SUB1_var, SUB2_var)) = SUB1_var;
+
+  IntervalExpr_op2_SUB: AXIOM
+    FORALL (SUB1_var: RealExpr, SUB2_var: RealExpr):
+      op2(SUB(SUB1_var, SUB2_var)) = SUB2_var;
+
+  IntervalExpr_op1_MULT: AXIOM
+    FORALL (MULT1_var: RealExpr, MULT2_var: RealExpr):
+      op1(MULT(MULT1_var, MULT2_var)) = MULT1_var;
+
+  IntervalExpr_op2_MULT: AXIOM
+    FORALL (MULT1_var: RealExpr, MULT2_var: RealExpr):
+      op2(MULT(MULT1_var, MULT2_var)) = MULT2_var;
+
+  IntervalExpr_op_SQ: AXIOM
+    FORALL (SQ1_var: RealExpr): op(SQ(SQ1_var)) = SQ1_var;
+
+  IntervalExpr_op_POW: AXIOM
+    FORALL (POW1_var: RealExpr, POW2_var: nat):
+      op(POW(POW1_var, POW2_var)) = POW1_var;
+
+  IntervalExpr_opn_POW: AXIOM
+    FORALL (POW1_var: RealExpr, POW2_var: nat):
+      opn(POW(POW1_var, POW2_var)) = POW2_var;
+
+  IntervalExpr_op1_DIV: AXIOM
+    FORALL (DIV1_var: RealExpr, DIV2_var: RealExpr):
+      op1(DIV(DIV1_var, DIV2_var)) = DIV1_var;
+
+  IntervalExpr_op2_DIV: AXIOM
+    FORALL (DIV1_var: RealExpr, DIV2_var: RealExpr):
+      op2(DIV(DIV1_var, DIV2_var)) = DIV2_var;
+
+  IntervalExpr_pre_FUN: AXIOM
+    FORALL (FUN1_var: (Precondition?), FUN2_var: [real -> real],
+            FUN3_var:
+              {F: [Interval -> Interval] |
+                       Inclusion?(FUN1_var, FUN2_var)(F) AND
+                        Fundamental?(FUN1_var)(F)},
+            FUN4_var: RealExpr):
+      pre(FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var)) = FUN1_var;
+
+  IntervalExpr_opf_FUN: AXIOM
+    FORALL (FUN1_var: (Precondition?), FUN2_var: [real -> real],
+            FUN3_var:
+              {F: [Interval -> Interval] |
+                       Inclusion?(FUN1_var, FUN2_var)(F) AND
+                        Fundamental?(FUN1_var)(F)},
+            FUN4_var: RealExpr):
+      opf(FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var)) = FUN2_var;
+
+  IntervalExpr_opF_FUN: AXIOM
+    FORALL (FUN1_var: (Precondition?), FUN2_var: [real -> real],
+            FUN3_var:
+              {F: [Interval -> Interval] |
+                       Inclusion?(FUN1_var, FUN2_var)(F) AND
+                        Fundamental?(FUN1_var)(F)},
+            FUN4_var: RealExpr):
+      opF(FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var)) = FUN3_var;
+
+  IntervalExpr_op_FUN: AXIOM
+    FORALL (FUN1_var: (Precondition?), FUN2_var: [real -> real],
+            FUN3_var:
+              {F: [Interval -> Interval] |
+                       Inclusion?(FUN1_var, FUN2_var)(F) AND
+                        Fundamental?(FUN1_var)(F)},
+            FUN4_var: RealExpr):
+      op(FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var)) = FUN4_var;
+
+  IntervalExpr_rlet_LETIN: AXIOM
+    FORALL (LETIN1_var: RealExpr, LETIN2_var: RealExpr):
+      rlet(LETIN(LETIN1_var, LETIN2_var)) = LETIN1_var;
+
+  IntervalExpr_rin_LETIN: AXIOM
+    FORALL (LETIN1_var: RealExpr, LETIN2_var: RealExpr):
+      rin(LETIN(LETIN1_var, LETIN2_var)) = LETIN2_var;
+
+  IntervalExpr_opb_BCONST: AXIOM
+    FORALL (BCONST1_var: bool): opb(BCONST(BCONST1_var)) = BCONST1_var;
+
+  IntervalExpr_bop_BNOT: AXIOM
+    FORALL (BNOT1_var: BoolExpr): bop(BNOT(BNOT1_var)) = BNOT1_var;
+
+  IntervalExpr_bop1_BAND: AXIOM
+    FORALL (BAND1_var: BoolExpr, BAND2_var: BoolExpr):
+      bop1(BAND(BAND1_var, BAND2_var)) = BAND1_var;
+
+  IntervalExpr_bop2_BAND: AXIOM
+    FORALL (BAND1_var: BoolExpr, BAND2_var: BoolExpr):
+      bop2(BAND(BAND1_var, BAND2_var)) = BAND2_var;
+
+  IntervalExpr_bop1_BOR: AXIOM
+    FORALL (BOR1_var: BoolExpr, BOR2_var: BoolExpr):
+      bop1(BOR(BOR1_var, BOR2_var)) = BOR1_var;
+
+  IntervalExpr_bop2_BOR: AXIOM
+    FORALL (BOR1_var: BoolExpr, BOR2_var: BoolExpr):
+      bop2(BOR(BOR1_var, BOR2_var)) = BOR2_var;
+
+  IntervalExpr_bop1_BIMPLIES: AXIOM
+    FORALL (BIMPLIES1_var: BoolExpr, BIMPLIES2_var: BoolExpr):
+      bop1(BIMPLIES(BIMPLIES1_var, BIMPLIES2_var)) = BIMPLIES1_var;
+
+  IntervalExpr_bop2_BIMPLIES: AXIOM
+    FORALL (BIMPLIES1_var: BoolExpr, BIMPLIES2_var: BoolExpr):
+      bop2(BIMPLIES(BIMPLIES1_var, BIMPLIES2_var)) = BIMPLIES2_var;
+
+  IntervalExpr_rel_BREL: AXIOM
+    FORALL (BREL1_var: RealOrder, BREL2_var: RealExpr,
+            BREL3_var: RealExpr):
+      rel(BREL(BREL1_var, BREL2_var, BREL3_var)) = BREL1_var;
+
+  IntervalExpr_op1_BREL: AXIOM
+    FORALL (BREL1_var: RealOrder, BREL2_var: RealExpr,
+            BREL3_var: RealExpr):
+      op1(BREL(BREL1_var, BREL2_var, BREL3_var)) = BREL2_var;
+
+  IntervalExpr_op2_BREL: AXIOM
+    FORALL (BREL1_var: RealOrder, BREL2_var: RealExpr,
+            BREL3_var: RealExpr):
+      op2(BREL(BREL1_var, BREL2_var, BREL3_var)) = BREL3_var;
+
+  IntervalExpr_op_BINCLUDES: AXIOM
+    FORALL (BINCLUDES1_var: RealExpr, BINCLUDES2_var: Interval):
+      op(BINCLUDES(BINCLUDES1_var, BINCLUDES2_var)) = BINCLUDES1_var;
+
+  IntervalExpr_opi_BINCLUDES: AXIOM
+    FORALL (BINCLUDES1_var: RealExpr, BINCLUDES2_var: Interval):
+      opi(BINCLUDES(BINCLUDES1_var, BINCLUDES2_var)) = BINCLUDES2_var;
+
+  IntervalExpr_bif_BITE: AXIOM
+    FORALL (BITE1_var: BoolExpr, BITE2_var: BoolExpr, BITE3_var: BoolExpr):
+      bif(BITE(BITE1_var, BITE2_var, BITE3_var)) = BITE1_var;
+
+  IntervalExpr_bthen_BITE: AXIOM
+    FORALL (BITE1_var: BoolExpr, BITE2_var: BoolExpr, BITE3_var: BoolExpr):
+      bthen(BITE(BITE1_var, BITE2_var, BITE3_var)) = BITE2_var;
+
+  IntervalExpr_belse_BITE: AXIOM
+    FORALL (BITE1_var: BoolExpr, BITE2_var: BoolExpr, BITE3_var: BoolExpr):
+      belse(BITE(BITE1_var, BITE2_var, BITE3_var)) = BITE3_var;
+
+  IntervalExpr_blet_BLETIN: AXIOM
+    FORALL (BLETIN1_var: IntervalExpr, BLETIN2_var: BoolExpr):
+      blet(BLETIN(BLETIN1_var, BLETIN2_var)) = BLETIN1_var;
+
+  IntervalExpr_bin_BLETIN: AXIOM
+    FORALL (BLETIN1_var: IntervalExpr, BLETIN2_var: BoolExpr):
+      bin(BLETIN(BLETIN1_var, BLETIN2_var)) = BLETIN2_var;
+
+  IntervalExpr_inclusive: AXIOM
+    FORALL (IntervalExpr_var: IntervalExpr):
+          const?(IntervalExpr_var) OR varidx?(IntervalExpr_var)
+       OR add?(IntervalExpr_var) OR abs?(IntervalExpr_var)
+       OR neg?(IntervalExpr_var) OR sub?(IntervalExpr_var)
+       OR mult?(IntervalExpr_var) OR sq?(IntervalExpr_var)
+       OR pow?(IntervalExpr_var) OR div?(IntervalExpr_var)
+       OR fun?(IntervalExpr_var) OR letin?(IntervalExpr_var)
+       OR bconst?(IntervalExpr_var) OR bnot?(IntervalExpr_var)
+       OR band?(IntervalExpr_var) OR bor?(IntervalExpr_var)
+       OR bimplies?(IntervalExpr_var) OR brel?(IntervalExpr_var)
+       OR bincludes?(IntervalExpr_var) OR bite?(IntervalExpr_var)
+       OR bletin?(IntervalExpr_var);
+
+  IntervalExpr_induction: AXIOM
+    FORALL (p: [IntervalExpr -> boolean]):
+      (     FORALL (CONST1_var: [Unit -> real],
+                    CONST2_var: (Includes?(CONST1_var(unit)))):
+              p(CONST(CONST1_var, CONST2_var))
+        AND FORALL (VARIDX1_var: nat): p(VARIDX(VARIDX1_var))
+        AND FORALL (ADD1_var: RealExpr, ADD2_var: RealExpr):
+              p(ADD1_var) AND p(ADD2_var) IMPLIES p(ADD(ADD1_var, ADD2_var))
+        AND FORALL (ABS1_var: RealExpr):
+              p(ABS1_var) IMPLIES p(ABS(ABS1_var))
+        AND FORALL (NEG1_var: RealExpr):
+              p(NEG1_var) IMPLIES p(NEG(NEG1_var))
+        AND FORALL (SUB1_var: RealExpr, SUB2_var: RealExpr):
+              p(SUB1_var) AND p(SUB2_var) IMPLIES p(SUB(SUB1_var, SUB2_var))
+        AND FORALL (MULT1_var: RealExpr, MULT2_var: RealExpr):
+              p(MULT1_var) AND p(MULT2_var) IMPLIES
+               p(MULT(MULT1_var, MULT2_var))
+        AND FORALL (SQ1_var: RealExpr): p(SQ1_var) IMPLIES p(SQ(SQ1_var))
+        AND FORALL (POW1_var: RealExpr, POW2_var: nat):
+              p(POW1_var) IMPLIES p(POW(POW1_var, POW2_var))
+        AND FORALL (DIV1_var: RealExpr, DIV2_var: RealExpr):
+              p(DIV1_var) AND p(DIV2_var) IMPLIES p(DIV(DIV1_var, DIV2_var))
+        AND FORALL (FUN1_var: (Precondition?), FUN2_var: [real -> real],
+                    FUN3_var:
+                      {F: [Interval -> Interval] |
+                               Inclusion?(FUN1_var, FUN2_var)(F) AND
+                                Fundamental?(FUN1_var)(F)},
+                    FUN4_var: RealExpr):
+              p(FUN4_var) IMPLIES
+               p(FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var))
+        AND FORALL (LETIN1_var: RealExpr, LETIN2_var: RealExpr):
+              p(LETIN1_var) AND p(LETIN2_var) IMPLIES
+               p(LETIN(LETIN1_var, LETIN2_var))
+        AND FORALL (BCONST1_var: bool): p(BCONST(BCONST1_var))
+        AND FORALL (BNOT1_var: BoolExpr):
+              p(BNOT1_var) IMPLIES p(BNOT(BNOT1_var))
+        AND FORALL (BAND1_var: BoolExpr, BAND2_var: BoolExpr):
+              p(BAND1_var) AND p(BAND2_var) IMPLIES
+               p(BAND(BAND1_var, BAND2_var))
+        AND FORALL (BOR1_var: BoolExpr, BOR2_var: BoolExpr):
+              p(BOR1_var) AND p(BOR2_var) IMPLIES p(BOR(BOR1_var, BOR2_var))
+        AND FORALL (BIMPLIES1_var: BoolExpr, BIMPLIES2_var: BoolExpr):
+              p(BIMPLIES1_var) AND p(BIMPLIES2_var) IMPLIES
+               p(BIMPLIES(BIMPLIES1_var, BIMPLIES2_var))
+        AND FORALL (BREL1_var: RealOrder, BREL2_var: RealExpr,
+                    BREL3_var: RealExpr):
+              p(BREL2_var) AND p(BREL3_var) IMPLIES
+               p(BREL(BREL1_var, BREL2_var, BREL3_var))
+        AND FORALL (BINCLUDES1_var: RealExpr, BINCLUDES2_var: Interval):
+              p(BINCLUDES1_var) IMPLIES
+               p(BINCLUDES(BINCLUDES1_var, BINCLUDES2_var))
+        AND FORALL (BITE1_var: BoolExpr, BITE2_var: BoolExpr,
+                    BITE3_var: BoolExpr):
+              p(BITE1_var) AND p(BITE2_var) AND p(BITE3_var) IMPLIES
+               p(BITE(BITE1_var, BITE2_var, BITE3_var))
+        AND FORALL (BLETIN1_var: IntervalExpr, BLETIN2_var: BoolExpr):
+              p(BLETIN1_var) AND p(BLETIN2_var) IMPLIES
+               p(BLETIN(BLETIN1_var, BLETIN2_var)))
+       IMPLIES
+       (FORALL (IntervalExpr_var: IntervalExpr): p(IntervalExpr_var));
+
+  subterm(x: IntervalExpr, y: IntervalExpr):  boolean =
+      x = y OR
+       CASES y
+         OF CONST(CONST1_var, CONST2_var): FALSE,
+            VARIDX(VARIDX1_var): FALSE,
+            ADD(ADD1_var, ADD2_var):
+              subterm(x, ADD1_var) OR subterm(x, ADD2_var),
+            ABS(ABS1_var): subterm(x, ABS1_var),
+            NEG(NEG1_var): subterm(x, NEG1_var),
+            SUB(SUB1_var, SUB2_var):
+              subterm(x, SUB1_var) OR subterm(x, SUB2_var),
+            MULT(MULT1_var, MULT2_var):
+              subterm(x, MULT1_var) OR subterm(x, MULT2_var),
+            SQ(SQ1_var): subterm(x, SQ1_var),
+            POW(POW1_var, POW2_var): subterm(x, POW1_var),
+            DIV(DIV1_var, DIV2_var):
+              subterm(x, DIV1_var) OR subterm(x, DIV2_var),
+            FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+              subterm(x, FUN4_var),
+            LETIN(LETIN1_var, LETIN2_var):
+              subterm(x, LETIN1_var) OR subterm(x, LETIN2_var),
+            BCONST(BCONST1_var): FALSE,
+            BNOT(BNOT1_var): subterm(x, BNOT1_var),
+            BAND(BAND1_var, BAND2_var):
+              subterm(x, BAND1_var) OR subterm(x, BAND2_var),
+            BOR(BOR1_var, BOR2_var):
+              subterm(x, BOR1_var) OR subterm(x, BOR2_var),
+            BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+              subterm(x, BIMPLIES1_var) OR subterm(x, BIMPLIES2_var),
+            BREL(BREL1_var, BREL2_var, BREL3_var):
+              subterm(x, BREL2_var) OR subterm(x, BREL3_var),
+            BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+              subterm(x, BINCLUDES1_var),
+            BITE(BITE1_var, BITE2_var, BITE3_var):
+              subterm(x, BITE1_var) OR
+               subterm(x, BITE2_var) OR subterm(x, BITE3_var),
+            BLETIN(BLETIN1_var, BLETIN2_var):
+              subterm(x, BLETIN1_var) OR subterm(x, BLETIN2_var)
+         ENDCASES;
+
+  <<:  (strict_well_founded?[IntervalExpr]) =
+      LAMBDA (x, y: IntervalExpr):
+        CASES y
+          OF CONST(CONST1_var, CONST2_var): FALSE,
+             VARIDX(VARIDX1_var): FALSE,
+             ADD(ADD1_var, ADD2_var):
+               (x = ADD1_var OR x << ADD1_var) OR
+                x = ADD2_var OR x << ADD2_var,
+             ABS(ABS1_var): x = ABS1_var OR x << ABS1_var,
+             NEG(NEG1_var): x = NEG1_var OR x << NEG1_var,
+             SUB(SUB1_var, SUB2_var):
+               (x = SUB1_var OR x << SUB1_var) OR
+                x = SUB2_var OR x << SUB2_var,
+             MULT(MULT1_var, MULT2_var):
+               (x = MULT1_var OR x << MULT1_var) OR
+                x = MULT2_var OR x << MULT2_var,
+             SQ(SQ1_var): x = SQ1_var OR x << SQ1_var,
+             POW(POW1_var, POW2_var): x = POW1_var OR x << POW1_var,
+             DIV(DIV1_var, DIV2_var):
+               (x = DIV1_var OR x << DIV1_var) OR
+                x = DIV2_var OR x << DIV2_var,
+             FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+               x = FUN4_var OR x << FUN4_var,
+             LETIN(LETIN1_var, LETIN2_var):
+               (x = LETIN1_var OR x << LETIN1_var) OR
+                x = LETIN2_var OR x << LETIN2_var,
+             BCONST(BCONST1_var): FALSE,
+             BNOT(BNOT1_var): x = BNOT1_var OR x << BNOT1_var,
+             BAND(BAND1_var, BAND2_var):
+               (x = BAND1_var OR x << BAND1_var) OR
+                x = BAND2_var OR x << BAND2_var,
+             BOR(BOR1_var, BOR2_var):
+               (x = BOR1_var OR x << BOR1_var) OR
+                x = BOR2_var OR x << BOR2_var,
+             BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+               (x = BIMPLIES1_var OR x << BIMPLIES1_var) OR
+                x = BIMPLIES2_var OR x << BIMPLIES2_var,
+             BREL(BREL1_var, BREL2_var, BREL3_var):
+               (x = BREL2_var OR x << BREL2_var) OR
+                x = BREL3_var OR x << BREL3_var,
+             BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+               x = BINCLUDES1_var OR x << BINCLUDES1_var,
+             BITE(BITE1_var, BITE2_var, BITE3_var):
+                   x = BITE1_var OR x << BITE1_var OR x = BITE2_var
+                OR x << BITE2_var OR x = BITE3_var OR x << BITE3_var,
+             BLETIN(BLETIN1_var, BLETIN2_var):
+               (x = BLETIN1_var OR x << BLETIN1_var) OR
+                x = BLETIN2_var OR x << BLETIN2_var
+          ENDCASES;
+
+  IntervalExpr_well_founded: AXIOM strict_well_founded?[IntervalExpr](<<);
+
+  reduce_nat(const?_fun:
+               [[CONST1_var: [Unit -> real],
+                 (Includes?(CONST1_var(unit)))] ->
+                  nat],
+             varidx?_fun: [nat -> nat], add?_fun: [[nat, nat] -> nat],
+             abs?_fun: [nat -> nat], neg?_fun: [nat -> nat],
+             sub?_fun: [[nat, nat] -> nat], mult?_fun: [[nat, nat] -> nat],
+             sq?_fun: [nat -> nat], pow?_fun: [[nat, nat] -> nat],
+             div?_fun: [[nat, nat] -> nat],
+             fun?_fun:
+               [[FUN1_var: (Precondition?), FUN2_var: [real -> real],
+                 {F: [Interval -> Interval] |
+                          Inclusion?(FUN1_var, FUN2_var)(F) AND
+                           Fundamental?(FUN1_var)(F)},
+                 nat] ->
+                  nat],
+             letin?_fun: [[nat, nat] -> nat], bconst?_fun: [bool -> nat],
+             bnot?_fun: [nat -> nat], band?_fun: [[nat, nat] -> nat],
+             bor?_fun: [[nat, nat] -> nat],
+             bimplies?_fun: [[nat, nat] -> nat],
+             brel?_fun: [[RealOrder, nat, nat] -> nat],
+             bincludes?_fun: [[nat, Interval] -> nat],
+             bite?_fun: [[nat, nat, nat] -> nat],
+             bletin?_fun: [[nat, nat] -> nat]):
+        [IntervalExpr -> nat] =
+      LAMBDA (IntervalExpr_adtvar: IntervalExpr):
+        LET red: [IntervalExpr -> nat] =
+              reduce_nat(const?_fun, varidx?_fun, add?_fun, abs?_fun,
+                         neg?_fun, sub?_fun, mult?_fun, sq?_fun, pow?_fun,
+                         div?_fun, fun?_fun, letin?_fun, bconst?_fun,
+                         bnot?_fun, band?_fun, bor?_fun, bimplies?_fun,
+                         brel?_fun, bincludes?_fun, bite?_fun, bletin?_fun)
+          IN
+          CASES IntervalExpr_adtvar
+            OF CONST(CONST1_var, CONST2_var):
+                 const?_fun(CONST1_var, CONST2_var),
+               VARIDX(VARIDX1_var): varidx?_fun(VARIDX1_var),
+               ADD(ADD1_var, ADD2_var):
+                 add?_fun(red(ADD1_var), red(ADD2_var)),
+               ABS(ABS1_var): abs?_fun(red(ABS1_var)),
+               NEG(NEG1_var): neg?_fun(red(NEG1_var)),
+               SUB(SUB1_var, SUB2_var):
+                 sub?_fun(red(SUB1_var), red(SUB2_var)),
+               MULT(MULT1_var, MULT2_var):
+                 mult?_fun(red(MULT1_var), red(MULT2_var)),
+               SQ(SQ1_var): sq?_fun(red(SQ1_var)),
+               POW(POW1_var, POW2_var): pow?_fun(red(POW1_var), POW2_var),
+               DIV(DIV1_var, DIV2_var):
+                 div?_fun(red(DIV1_var), red(DIV2_var)),
+               FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+                 fun?_fun(FUN1_var, FUN2_var, FUN3_var, red(FUN4_var)),
+               LETIN(LETIN1_var, LETIN2_var):
+                 letin?_fun(red(LETIN1_var), red(LETIN2_var)),
+               BCONST(BCONST1_var): bconst?_fun(BCONST1_var),
+               BNOT(BNOT1_var): bnot?_fun(red(BNOT1_var)),
+               BAND(BAND1_var, BAND2_var):
+                 band?_fun(red(BAND1_var), red(BAND2_var)),
+               BOR(BOR1_var, BOR2_var):
+                 bor?_fun(red(BOR1_var), red(BOR2_var)),
+               BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+                 bimplies?_fun(red(BIMPLIES1_var), red(BIMPLIES2_var)),
+               BREL(BREL1_var, BREL2_var, BREL3_var):
+                 brel?_fun(BREL1_var, red(BREL2_var), red(BREL3_var)),
+               BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+                 bincludes?_fun(red(BINCLUDES1_var), BINCLUDES2_var),
+               BITE(BITE1_var, BITE2_var, BITE3_var):
+                 bite?_fun(red(BITE1_var), red(BITE2_var), red(BITE3_var)),
+               BLETIN(BLETIN1_var, BLETIN2_var):
+                 bletin?_fun(red(BLETIN1_var), red(BLETIN2_var))
+            ENDCASES;
+
+  REDUCE_nat(const?_fun:
+               [[CONST1_var: [Unit -> real], (Includes?(CONST1_var(unit))),
+                 IntervalExpr] ->
+                  nat],
+             varidx?_fun: [[nat, IntervalExpr] -> nat],
+             add?_fun: [[nat, nat, IntervalExpr] -> nat],
+             abs?_fun: [[nat, IntervalExpr] -> nat],
+             neg?_fun: [[nat, IntervalExpr] -> nat],
+             sub?_fun: [[nat, nat, IntervalExpr] -> nat],
+             mult?_fun: [[nat, nat, IntervalExpr] -> nat],
+             sq?_fun: [[nat, IntervalExpr] -> nat],
+             pow?_fun: [[nat, nat, IntervalExpr] -> nat],
+             div?_fun: [[nat, nat, IntervalExpr] -> nat],
+             fun?_fun:
+               [[FUN1_var: (Precondition?), FUN2_var: [real -> real],
+                 {F: [Interval -> Interval] |
+                          Inclusion?(FUN1_var, FUN2_var)(F) AND
+                           Fundamental?(FUN1_var)(F)},
+                 nat, IntervalExpr] ->
+                  nat],
+             letin?_fun: [[nat, nat, IntervalExpr] -> nat],
+             bconst?_fun: [[bool, IntervalExpr] -> nat],
+             bnot?_fun: [[nat, IntervalExpr] -> nat],
+             band?_fun: [[nat, nat, IntervalExpr] -> nat],
+             bor?_fun: [[nat, nat, IntervalExpr] -> nat],
+             bimplies?_fun: [[nat, nat, IntervalExpr] -> nat],
+             brel?_fun: [[RealOrder, nat, nat, IntervalExpr] -> nat],
+             bincludes?_fun: [[nat, Interval, IntervalExpr] -> nat],
+             bite?_fun: [[nat, nat, nat, IntervalExpr] -> nat],
+             bletin?_fun: [[nat, nat, IntervalExpr] -> nat]):
+        [IntervalExpr -> nat] =
+      LAMBDA (IntervalExpr_adtvar: IntervalExpr):
+        LET red: [IntervalExpr -> nat] =
+              REDUCE_nat(const?_fun, varidx?_fun, add?_fun, abs?_fun,
+                         neg?_fun, sub?_fun, mult?_fun, sq?_fun, pow?_fun,
+                         div?_fun, fun?_fun, letin?_fun, bconst?_fun,
+                         bnot?_fun, band?_fun, bor?_fun, bimplies?_fun,
+                         brel?_fun, bincludes?_fun, bite?_fun, bletin?_fun)
+          IN
+          CASES IntervalExpr_adtvar
+            OF CONST(CONST1_var, CONST2_var):
+                 const?_fun(CONST1_var, CONST2_var, IntervalExpr_adtvar),
+               VARIDX(VARIDX1_var):
+                 varidx?_fun(VARIDX1_var, IntervalExpr_adtvar),
+               ADD(ADD1_var, ADD2_var):
+                 add?_fun(red(ADD1_var), red(ADD2_var),
+                          IntervalExpr_adtvar),
+               ABS(ABS1_var): abs?_fun(red(ABS1_var), IntervalExpr_adtvar),
+               NEG(NEG1_var): neg?_fun(red(NEG1_var), IntervalExpr_adtvar),
+               SUB(SUB1_var, SUB2_var):
+                 sub?_fun(red(SUB1_var), red(SUB2_var),
+                          IntervalExpr_adtvar),
+               MULT(MULT1_var, MULT2_var):
+                 mult?_fun(red(MULT1_var), red(MULT2_var),
+                           IntervalExpr_adtvar),
+               SQ(SQ1_var): sq?_fun(red(SQ1_var), IntervalExpr_adtvar),
+               POW(POW1_var, POW2_var):
+                 pow?_fun(red(POW1_var), POW2_var, IntervalExpr_adtvar),
+               DIV(DIV1_var, DIV2_var):
+                 div?_fun(red(DIV1_var), red(DIV2_var),
+                          IntervalExpr_adtvar),
+               FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+                 fun?_fun(FUN1_var, FUN2_var, FUN3_var, red(FUN4_var),
+                          IntervalExpr_adtvar),
+               LETIN(LETIN1_var, LETIN2_var):
+                 letin?_fun(red(LETIN1_var), red(LETIN2_var),
+                            IntervalExpr_adtvar),
+               BCONST(BCONST1_var):
+                 bconst?_fun(BCONST1_var, IntervalExpr_adtvar),
+               BNOT(BNOT1_var):
+                 bnot?_fun(red(BNOT1_var), IntervalExpr_adtvar),
+               BAND(BAND1_var, BAND2_var):
+                 band?_fun(red(BAND1_var), red(BAND2_var),
+                           IntervalExpr_adtvar),
+               BOR(BOR1_var, BOR2_var):
+                 bor?_fun(red(BOR1_var), red(BOR2_var),
+                          IntervalExpr_adtvar),
+               BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+                 bimplies?_fun(red(BIMPLIES1_var), red(BIMPLIES2_var),
+                               IntervalExpr_adtvar),
+               BREL(BREL1_var, BREL2_var, BREL3_var):
+                 brel?_fun(BREL1_var, red(BREL2_var), red(BREL3_var),
+                           IntervalExpr_adtvar),
+               BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+                 bincludes?_fun(red(BINCLUDES1_var), BINCLUDES2_var,
+                                IntervalExpr_adtvar),
+               BITE(BITE1_var, BITE2_var, BITE3_var):
+                 bite?_fun(red(BITE1_var), red(BITE2_var), red(BITE3_var),
+                           IntervalExpr_adtvar),
+               BLETIN(BLETIN1_var, BLETIN2_var):
+                 bletin?_fun(red(BLETIN1_var), red(BLETIN2_var),
+                             IntervalExpr_adtvar)
+            ENDCASES;
+
+  reduce_ordinal(const?_fun:
+                   [[CONST1_var: [Unit -> real],
+                     (Includes?(CONST1_var(unit)))] ->
+                      ordinal],
+                 varidx?_fun: [nat -> ordinal],
+                 add?_fun: [[ordinal, ordinal] -> ordinal],
+                 abs?_fun: [ordinal -> ordinal],
+                 neg?_fun: [ordinal -> ordinal],
+                 sub?_fun: [[ordinal, ordinal] -> ordinal],
+                 mult?_fun: [[ordinal, ordinal] -> ordinal],
+                 sq?_fun: [ordinal -> ordinal],
+                 pow?_fun: [[ordinal, nat] -> ordinal],
+                 div?_fun: [[ordinal, ordinal] -> ordinal],
+                 fun?_fun:
+                   [[FUN1_var: (Precondition?), FUN2_var: [real -> real],
+                     {F: [Interval -> Interval] |
+                              Inclusion?(FUN1_var, FUN2_var)(F) AND
+                               Fundamental?(FUN1_var)(F)},
+                     ordinal] ->
+                      ordinal],
+                 letin?_fun: [[ordinal, ordinal] -> ordinal],
+                 bconst?_fun: [bool -> ordinal],
+                 bnot?_fun: [ordinal -> ordinal],
+                 band?_fun: [[ordinal, ordinal] -> ordinal],
+                 bor?_fun: [[ordinal, ordinal] -> ordinal],
+                 bimplies?_fun: [[ordinal, ordinal] -> ordinal],
+                 brel?_fun: [[RealOrder, ordinal, ordinal] -> ordinal],
+                 bincludes?_fun: [[ordinal, Interval] -> ordinal],
+                 bite?_fun: [[ordinal, ordinal, ordinal] -> ordinal],
+                 bletin?_fun: [[ordinal, ordinal] -> ordinal]):
+        [IntervalExpr -> ordinal] =
+      LAMBDA (IntervalExpr_adtvar: IntervalExpr):
+        LET red: [IntervalExpr -> ordinal] =
+              reduce_ordinal(const?_fun, varidx?_fun, add?_fun, abs?_fun,
+                             neg?_fun, sub?_fun, mult?_fun, sq?_fun,
+                             pow?_fun, div?_fun, fun?_fun, letin?_fun,
+                             bconst?_fun, bnot?_fun, band?_fun, bor?_fun,
+                             bimplies?_fun, brel?_fun, bincludes?_fun,
+                             bite?_fun, bletin?_fun)
+          IN
+          CASES IntervalExpr_adtvar
+            OF CONST(CONST1_var, CONST2_var):
+                 const?_fun(CONST1_var, CONST2_var),
+               VARIDX(VARIDX1_var): varidx?_fun(VARIDX1_var),
+               ADD(ADD1_var, ADD2_var):
+                 add?_fun(red(ADD1_var), red(ADD2_var)),
+               ABS(ABS1_var): abs?_fun(red(ABS1_var)),
+               NEG(NEG1_var): neg?_fun(red(NEG1_var)),
+               SUB(SUB1_var, SUB2_var):
+                 sub?_fun(red(SUB1_var), red(SUB2_var)),
+               MULT(MULT1_var, MULT2_var):
+                 mult?_fun(red(MULT1_var), red(MULT2_var)),
+               SQ(SQ1_var): sq?_fun(red(SQ1_var)),
+               POW(POW1_var, POW2_var): pow?_fun(red(POW1_var), POW2_var),
+               DIV(DIV1_var, DIV2_var):
+                 div?_fun(red(DIV1_var), red(DIV2_var)),
+               FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+                 fun?_fun(FUN1_var, FUN2_var, FUN3_var, red(FUN4_var)),
+               LETIN(LETIN1_var, LETIN2_var):
+                 letin?_fun(red(LETIN1_var), red(LETIN2_var)),
+               BCONST(BCONST1_var): bconst?_fun(BCONST1_var),
+               BNOT(BNOT1_var): bnot?_fun(red(BNOT1_var)),
+               BAND(BAND1_var, BAND2_var):
+                 band?_fun(red(BAND1_var), red(BAND2_var)),
+               BOR(BOR1_var, BOR2_var):
+                 bor?_fun(red(BOR1_var), red(BOR2_var)),
+               BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+                 bimplies?_fun(red(BIMPLIES1_var), red(BIMPLIES2_var)),
+               BREL(BREL1_var, BREL2_var, BREL3_var):
+                 brel?_fun(BREL1_var, red(BREL2_var), red(BREL3_var)),
+               BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+                 bincludes?_fun(red(BINCLUDES1_var), BINCLUDES2_var),
+               BITE(BITE1_var, BITE2_var, BITE3_var):
+                 bite?_fun(red(BITE1_var), red(BITE2_var), red(BITE3_var)),
+               BLETIN(BLETIN1_var, BLETIN2_var):
+                 bletin?_fun(red(BLETIN1_var), red(BLETIN2_var))
+            ENDCASES;
+
+  REDUCE_ordinal(const?_fun:
+                   [[CONST1_var: [Unit -> real],
+                     (Includes?(CONST1_var(unit))), IntervalExpr] ->
+                      ordinal],
+                 varidx?_fun: [[nat, IntervalExpr] -> ordinal],
+                 add?_fun: [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 abs?_fun: [[ordinal, IntervalExpr] -> ordinal],
+                 neg?_fun: [[ordinal, IntervalExpr] -> ordinal],
+                 sub?_fun: [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 mult?_fun: [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 sq?_fun: [[ordinal, IntervalExpr] -> ordinal],
+                 pow?_fun: [[ordinal, nat, IntervalExpr] -> ordinal],
+                 div?_fun: [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 fun?_fun:
+                   [[FUN1_var: (Precondition?), FUN2_var: [real -> real],
+                     {F: [Interval -> Interval] |
+                              Inclusion?(FUN1_var, FUN2_var)(F) AND
+                               Fundamental?(FUN1_var)(F)},
+                     ordinal, IntervalExpr] ->
+                      ordinal],
+                 letin?_fun: [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 bconst?_fun: [[bool, IntervalExpr] -> ordinal],
+                 bnot?_fun: [[ordinal, IntervalExpr] -> ordinal],
+                 band?_fun: [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 bor?_fun: [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 bimplies?_fun:
+                   [[ordinal, ordinal, IntervalExpr] -> ordinal],
+                 brel?_fun:
+                   [[RealOrder, ordinal, ordinal, IntervalExpr] ->
+                      ordinal],
+                 bincludes?_fun:
+                   [[ordinal, Interval, IntervalExpr] -> ordinal],
+                 bite?_fun:
+                   [[ordinal, ordinal, ordinal, IntervalExpr] -> ordinal],
+                 bletin?_fun:
+                   [[ordinal, ordinal, IntervalExpr] -> ordinal]):
+        [IntervalExpr -> ordinal] =
+      LAMBDA (IntervalExpr_adtvar: IntervalExpr):
+        LET red: [IntervalExpr -> ordinal] =
+              REDUCE_ordinal(const?_fun, varidx?_fun, add?_fun, abs?_fun,
+                             neg?_fun, sub?_fun, mult?_fun, sq?_fun,
+                             pow?_fun, div?_fun, fun?_fun, letin?_fun,
+                             bconst?_fun, bnot?_fun, band?_fun, bor?_fun,
+                             bimplies?_fun, brel?_fun, bincludes?_fun,
+                             bite?_fun, bletin?_fun)
+          IN
+          CASES IntervalExpr_adtvar
+            OF CONST(CONST1_var, CONST2_var):
+                 const?_fun(CONST1_var, CONST2_var, IntervalExpr_adtvar),
+               VARIDX(VARIDX1_var):
+                 varidx?_fun(VARIDX1_var, IntervalExpr_adtvar),
+               ADD(ADD1_var, ADD2_var):
+                 add?_fun(red(ADD1_var), red(ADD2_var),
+                          IntervalExpr_adtvar),
+               ABS(ABS1_var): abs?_fun(red(ABS1_var), IntervalExpr_adtvar),
+               NEG(NEG1_var): neg?_fun(red(NEG1_var), IntervalExpr_adtvar),
+               SUB(SUB1_var, SUB2_var):
+                 sub?_fun(red(SUB1_var), red(SUB2_var),
+                          IntervalExpr_adtvar),
+               MULT(MULT1_var, MULT2_var):
+                 mult?_fun(red(MULT1_var), red(MULT2_var),
+                           IntervalExpr_adtvar),
+               SQ(SQ1_var): sq?_fun(red(SQ1_var), IntervalExpr_adtvar),
+               POW(POW1_var, POW2_var):
+                 pow?_fun(red(POW1_var), POW2_var, IntervalExpr_adtvar),
+               DIV(DIV1_var, DIV2_var):
+                 div?_fun(red(DIV1_var), red(DIV2_var),
+                          IntervalExpr_adtvar),
+               FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+                 fun?_fun(FUN1_var, FUN2_var, FUN3_var, red(FUN4_var),
+                          IntervalExpr_adtvar),
+               LETIN(LETIN1_var, LETIN2_var):
+                 letin?_fun(red(LETIN1_var), red(LETIN2_var),
+                            IntervalExpr_adtvar),
+               BCONST(BCONST1_var):
+                 bconst?_fun(BCONST1_var, IntervalExpr_adtvar),
+               BNOT(BNOT1_var):
+                 bnot?_fun(red(BNOT1_var), IntervalExpr_adtvar),
+               BAND(BAND1_var, BAND2_var):
+                 band?_fun(red(BAND1_var), red(BAND2_var),
+                           IntervalExpr_adtvar),
+               BOR(BOR1_var, BOR2_var):
+                 bor?_fun(red(BOR1_var), red(BOR2_var),
+                          IntervalExpr_adtvar),
+               BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+                 bimplies?_fun(red(BIMPLIES1_var), red(BIMPLIES2_var),
+                               IntervalExpr_adtvar),
+               BREL(BREL1_var, BREL2_var, BREL3_var):
+                 brel?_fun(BREL1_var, red(BREL2_var), red(BREL3_var),
+                           IntervalExpr_adtvar),
+               BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+                 bincludes?_fun(red(BINCLUDES1_var), BINCLUDES2_var,
+                                IntervalExpr_adtvar),
+               BITE(BITE1_var, BITE2_var, BITE3_var):
+                 bite?_fun(red(BITE1_var), red(BITE2_var), red(BITE3_var),
+                           IntervalExpr_adtvar),
+               BLETIN(BLETIN1_var, BLETIN2_var):
+                 bletin?_fun(red(BLETIN1_var), red(BLETIN2_var),
+                             IntervalExpr_adtvar)
+            ENDCASES;
+ END IntervalExpr_adt
+
+IntervalExpr_adt_reduce[range: TYPE]: THEORY
+ BEGIN
+
+  IMPORTING IntervalExpr_adt
+
+  IMPORTING interval, structures@Unit, reals@real_orders
+
+  reduce(const?_fun:
+           [[CONST1_var: [Unit -> real], (Includes?(CONST1_var(unit)))] ->
+              range],
+         varidx?_fun: [nat -> range], add?_fun: [[range, range] -> range],
+         abs?_fun: [range -> range], neg?_fun: [range -> range],
+         sub?_fun: [[range, range] -> range],
+         mult?_fun: [[range, range] -> range], sq?_fun: [range -> range],
+         pow?_fun: [[range, nat] -> range],
+         div?_fun: [[range, range] -> range],
+         fun?_fun:
+           [[FUN1_var: (Precondition?), FUN2_var: [real -> real],
+             {F: [Interval -> Interval] |
+                      Inclusion?(FUN1_var, FUN2_var)(F) AND
+                       Fundamental?(FUN1_var)(F)},
+             range] ->
+              range],
+         letin?_fun: [[range, range] -> range],
+         bconst?_fun: [bool -> range], bnot?_fun: [range -> range],
+         band?_fun: [[range, range] -> range],
+         bor?_fun: [[range, range] -> range],
+         bimplies?_fun: [[range, range] -> range],
+         brel?_fun: [[RealOrder, range, range] -> range],
+         bincludes?_fun: [[range, Interval] -> range],
+         bite?_fun: [[range, range, range] -> range],
+         bletin?_fun: [[range, range] -> range]):
+        [IntervalExpr -> range] =
+      LAMBDA (IntervalExpr_adtvar: IntervalExpr):
+        LET red: [IntervalExpr -> range] =
+              reduce(const?_fun, varidx?_fun, add?_fun, abs?_fun, neg?_fun,
+                     sub?_fun, mult?_fun, sq?_fun, pow?_fun, div?_fun,
+                     fun?_fun, letin?_fun, bconst?_fun, bnot?_fun,
+                     band?_fun, bor?_fun, bimplies?_fun, brel?_fun,
+                     bincludes?_fun, bite?_fun, bletin?_fun)
+          IN
+          CASES IntervalExpr_adtvar
+            OF CONST(CONST1_var, CONST2_var):
+                 const?_fun(CONST1_var, CONST2_var),
+               VARIDX(VARIDX1_var): varidx?_fun(VARIDX1_var),
+               ADD(ADD1_var, ADD2_var):
+                 add?_fun(red(ADD1_var), red(ADD2_var)),
+               ABS(ABS1_var): abs?_fun(red(ABS1_var)),
+               NEG(NEG1_var): neg?_fun(red(NEG1_var)),
+               SUB(SUB1_var, SUB2_var):
+                 sub?_fun(red(SUB1_var), red(SUB2_var)),
+               MULT(MULT1_var, MULT2_var):
+                 mult?_fun(red(MULT1_var), red(MULT2_var)),
+               SQ(SQ1_var): sq?_fun(red(SQ1_var)),
+               POW(POW1_var, POW2_var): pow?_fun(red(POW1_var), POW2_var),
+               DIV(DIV1_var, DIV2_var):
+                 div?_fun(red(DIV1_var), red(DIV2_var)),
+               FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+                 fun?_fun(FUN1_var, FUN2_var, FUN3_var, red(FUN4_var)),
+               LETIN(LETIN1_var, LETIN2_var):
+                 letin?_fun(red(LETIN1_var), red(LETIN2_var)),
+               BCONST(BCONST1_var): bconst?_fun(BCONST1_var),
+               BNOT(BNOT1_var): bnot?_fun(red(BNOT1_var)),
+               BAND(BAND1_var, BAND2_var):
+                 band?_fun(red(BAND1_var), red(BAND2_var)),
+               BOR(BOR1_var, BOR2_var):
+                 bor?_fun(red(BOR1_var), red(BOR2_var)),
+               BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+                 bimplies?_fun(red(BIMPLIES1_var), red(BIMPLIES2_var)),
+               BREL(BREL1_var, BREL2_var, BREL3_var):
+                 brel?_fun(BREL1_var, red(BREL2_var), red(BREL3_var)),
+               BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+                 bincludes?_fun(red(BINCLUDES1_var), BINCLUDES2_var),
+               BITE(BITE1_var, BITE2_var, BITE3_var):
+                 bite?_fun(red(BITE1_var), red(BITE2_var), red(BITE3_var)),
+               BLETIN(BLETIN1_var, BLETIN2_var):
+                 bletin?_fun(red(BLETIN1_var), red(BLETIN2_var))
+            ENDCASES;
+
+  REDUCE(const?_fun:
+           [[CONST1_var: [Unit -> real], (Includes?(CONST1_var(unit))),
+             IntervalExpr] ->
+              range],
+         varidx?_fun: [[nat, IntervalExpr] -> range],
+         add?_fun: [[range, range, IntervalExpr] -> range],
+         abs?_fun: [[range, IntervalExpr] -> range],
+         neg?_fun: [[range, IntervalExpr] -> range],
+         sub?_fun: [[range, range, IntervalExpr] -> range],
+         mult?_fun: [[range, range, IntervalExpr] -> range],
+         sq?_fun: [[range, IntervalExpr] -> range],
+         pow?_fun: [[range, nat, IntervalExpr] -> range],
+         div?_fun: [[range, range, IntervalExpr] -> range],
+         fun?_fun:
+           [[FUN1_var: (Precondition?), FUN2_var: [real -> real],
+             {F: [Interval -> Interval] |
+                      Inclusion?(FUN1_var, FUN2_var)(F) AND
+                       Fundamental?(FUN1_var)(F)},
+             range, IntervalExpr] ->
+              range],
+         letin?_fun: [[range, range, IntervalExpr] -> range],
+         bconst?_fun: [[bool, IntervalExpr] -> range],
+         bnot?_fun: [[range, IntervalExpr] -> range],
+         band?_fun: [[range, range, IntervalExpr] -> range],
+         bor?_fun: [[range, range, IntervalExpr] -> range],
+         bimplies?_fun: [[range, range, IntervalExpr] -> range],
+         brel?_fun: [[RealOrder, range, range, IntervalExpr] -> range],
+         bincludes?_fun: [[range, Interval, IntervalExpr] -> range],
+         bite?_fun: [[range, range, range, IntervalExpr] -> range],
+         bletin?_fun: [[range, range, IntervalExpr] -> range]):
+        [IntervalExpr -> range] =
+      LAMBDA (IntervalExpr_adtvar: IntervalExpr):
+        LET red: [IntervalExpr -> range] =
+              REDUCE(const?_fun, varidx?_fun, add?_fun, abs?_fun, neg?_fun,
+                     sub?_fun, mult?_fun, sq?_fun, pow?_fun, div?_fun,
+                     fun?_fun, letin?_fun, bconst?_fun, bnot?_fun,
+                     band?_fun, bor?_fun, bimplies?_fun, brel?_fun,
+                     bincludes?_fun, bite?_fun, bletin?_fun)
+          IN
+          CASES IntervalExpr_adtvar
+            OF CONST(CONST1_var, CONST2_var):
+                 const?_fun(CONST1_var, CONST2_var, IntervalExpr_adtvar),
+               VARIDX(VARIDX1_var):
+                 varidx?_fun(VARIDX1_var, IntervalExpr_adtvar),
+               ADD(ADD1_var, ADD2_var):
+                 add?_fun(red(ADD1_var), red(ADD2_var),
+                          IntervalExpr_adtvar),
+               ABS(ABS1_var): abs?_fun(red(ABS1_var), IntervalExpr_adtvar),
+               NEG(NEG1_var): neg?_fun(red(NEG1_var), IntervalExpr_adtvar),
+               SUB(SUB1_var, SUB2_var):
+                 sub?_fun(red(SUB1_var), red(SUB2_var),
+                          IntervalExpr_adtvar),
+               MULT(MULT1_var, MULT2_var):
+                 mult?_fun(red(MULT1_var), red(MULT2_var),
+                           IntervalExpr_adtvar),
+               SQ(SQ1_var): sq?_fun(red(SQ1_var), IntervalExpr_adtvar),
+               POW(POW1_var, POW2_var):
+                 pow?_fun(red(POW1_var), POW2_var, IntervalExpr_adtvar),
+               DIV(DIV1_var, DIV2_var):
+                 div?_fun(red(DIV1_var), red(DIV2_var),
+                          IntervalExpr_adtvar),
+               FUN(FUN1_var, FUN2_var, FUN3_var, FUN4_var):
+                 fun?_fun(FUN1_var, FUN2_var, FUN3_var, red(FUN4_var),
+                          IntervalExpr_adtvar),
+               LETIN(LETIN1_var, LETIN2_var):
+                 letin?_fun(red(LETIN1_var), red(LETIN2_var),
+                            IntervalExpr_adtvar),
+               BCONST(BCONST1_var):
+                 bconst?_fun(BCONST1_var, IntervalExpr_adtvar),
+               BNOT(BNOT1_var):
+                 bnot?_fun(red(BNOT1_var), IntervalExpr_adtvar),
+               BAND(BAND1_var, BAND2_var):
+                 band?_fun(red(BAND1_var), red(BAND2_var),
+                           IntervalExpr_adtvar),
+               BOR(BOR1_var, BOR2_var):
+                 bor?_fun(red(BOR1_var), red(BOR2_var),
+                          IntervalExpr_adtvar),
+               BIMPLIES(BIMPLIES1_var, BIMPLIES2_var):
+                 bimplies?_fun(red(BIMPLIES1_var), red(BIMPLIES2_var),
+                               IntervalExpr_adtvar),
+               BREL(BREL1_var, BREL2_var, BREL3_var):
+                 brel?_fun(BREL1_var, red(BREL2_var), red(BREL3_var),
+                           IntervalExpr_adtvar),
+               BINCLUDES(BINCLUDES1_var, BINCLUDES2_var):
+                 bincludes?_fun(red(BINCLUDES1_var), BINCLUDES2_var,
+                                IntervalExpr_adtvar),
+               BITE(BITE1_var, BITE2_var, BITE3_var):
+                 bite?_fun(red(BITE1_var), red(BITE2_var), red(BITE3_var),
+                           IntervalExpr_adtvar),
+               BLETIN(BLETIN1_var, BLETIN2_var):
+                 bletin?_fun(red(BLETIN1_var), red(BLETIN2_var),
+                             IntervalExpr_adtvar)
+            ENDCASES;
+ END IntervalExpr_adt_reduce

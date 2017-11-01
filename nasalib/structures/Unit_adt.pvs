@@ -1,0 +1,45 @@
+%%% ADT file generated from Unit
+
+Unit_adt: THEORY
+ BEGIN
+
+  Unit: TYPE
+
+  unit?: [Unit -> boolean]
+
+  unit: (unit?)
+
+  Unit_ord: [Unit -> upto(0)]
+
+  Unit_ord_defaxiom: AXIOM Unit_ord(unit) = 0;
+
+  ord(x: Unit): [Unit -> upto(0)] = CASES x OF unit: 0 ENDCASES
+
+  Unit_inclusive: AXIOM FORALL (Unit_var: Unit): unit?(Unit_var);
+
+  Unit_induction: AXIOM
+    FORALL (p: [Unit -> boolean]):
+      p(unit) IMPLIES (FORALL (Unit_var: Unit): p(Unit_var));
+
+  subterm(x: Unit, y: Unit):  boolean = x = y;
+
+  <<:  (strict_well_founded?[Unit]) = LAMBDA (x, y: Unit): FALSE;
+
+  Unit_well_founded: AXIOM strict_well_founded?[Unit](<<);
+ END Unit_adt
+
+Unit_adt_reduce[range: TYPE]: THEORY
+ BEGIN
+
+  IMPORTING Unit_adt
+
+  reduce(unit?_fun: range):  [Unit -> range] =
+      LAMBDA (Unit_adtvar: Unit):
+        LET red: [Unit -> range] = reduce(unit?_fun) IN
+          CASES Unit_adtvar OF unit: unit?_fun ENDCASES;
+
+  REDUCE(unit?_fun: [Unit -> range]):  [Unit -> range] =
+      LAMBDA (Unit_adtvar: Unit):
+        LET red: [Unit -> range] = REDUCE(unit?_fun) IN
+          CASES Unit_adtvar OF unit: unit?_fun(Unit_adtvar) ENDCASES;
+ END Unit_adt_reduce

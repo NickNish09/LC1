@@ -1,0 +1,164 @@
+%%% ADT file generated from message
+
+message_adt[T: TYPE+]: THEORY
+ BEGIN
+  ASSUMING
+   T_TCC1: ASSUMPTION EXISTS (x: T): TRUE;
+  ENDASSUMING
+
+  message: TYPE
+
+  garbled?, valid?: [message -> boolean]
+
+  value: [(valid?) -> T]
+
+  garbled: (garbled?)
+
+  valid: [T -> (valid?)]
+
+  message_ord: [message -> upto(1)]
+
+  message_ord_defaxiom: AXIOM
+    message_ord(garbled) = 0 AND
+     (FORALL (value: T): message_ord(valid(value)) = 1);
+
+  ord(x: message): [message -> upto(1)] =
+      CASES x OF garbled: 0, valid(valid1_var): 1 ENDCASES
+
+  message_garbled_extensionality: AXIOM
+    FORALL (garbled?_var: (garbled?), garbled?_var2: (garbled?)):
+      garbled?_var = garbled?_var2;
+
+  message_valid_extensionality: AXIOM
+    FORALL (valid?_var: (valid?), valid?_var2: (valid?)):
+      value(valid?_var) = value(valid?_var2) IMPLIES
+       valid?_var = valid?_var2;
+
+  message_valid_eta: AXIOM
+    FORALL (valid?_var: (valid?)): valid(value(valid?_var)) = valid?_var;
+
+  message_value_valid: AXIOM
+    FORALL (valid1_var: T): value(valid(valid1_var)) = valid1_var;
+
+  message_inclusive: AXIOM
+    FORALL (message_var: message):
+      garbled?(message_var) OR valid?(message_var);
+
+  message_induction: AXIOM
+    FORALL (p: [message -> boolean]):
+      (p(garbled) AND (FORALL (valid1_var: T): p(valid(valid1_var))))
+       IMPLIES (FORALL (message_var: message): p(message_var));
+
+  every(p: PRED[T])(a: message):  boolean =
+      CASES a OF garbled: TRUE, valid(valid1_var): p(valid1_var) ENDCASES;
+
+  every(p: PRED[T], a: message):  boolean =
+      CASES a OF garbled: TRUE, valid(valid1_var): p(valid1_var) ENDCASES;
+
+  some(p: PRED[T])(a: message):  boolean =
+      CASES a OF garbled: FALSE, valid(valid1_var): p(valid1_var) ENDCASES;
+
+  some(p: PRED[T], a: message):  boolean =
+      CASES a OF garbled: FALSE, valid(valid1_var): p(valid1_var) ENDCASES;
+
+  subterm(x: message, y: message):  boolean = x = y;
+
+  <<:  (strict_well_founded?[message]) = LAMBDA (x, y: message): FALSE;
+
+  message_well_founded: AXIOM strict_well_founded?[message](<<);
+
+  reduce_nat(garbled?_fun: nat, valid?_fun: [T -> nat]):
+        [message -> nat] =
+      LAMBDA (message_adtvar: message):
+        LET red: [message -> nat] = reduce_nat(garbled?_fun, valid?_fun) IN
+          CASES message_adtvar
+            OF garbled: garbled?_fun,
+               valid(valid1_var): valid?_fun(valid1_var)
+            ENDCASES;
+
+  REDUCE_nat(garbled?_fun: [message -> nat],
+             valid?_fun: [[T, message] -> nat]):
+        [message -> nat] =
+      LAMBDA (message_adtvar: message):
+        LET red: [message -> nat] = REDUCE_nat(garbled?_fun, valid?_fun) IN
+          CASES message_adtvar
+            OF garbled: garbled?_fun(message_adtvar),
+               valid(valid1_var): valid?_fun(valid1_var, message_adtvar)
+            ENDCASES;
+
+  reduce_ordinal(garbled?_fun: ordinal, valid?_fun: [T -> ordinal]):
+        [message -> ordinal] =
+      LAMBDA (message_adtvar: message):
+        LET red: [message -> ordinal] =
+              reduce_ordinal(garbled?_fun, valid?_fun)
+          IN
+          CASES message_adtvar
+            OF garbled: garbled?_fun,
+               valid(valid1_var): valid?_fun(valid1_var)
+            ENDCASES;
+
+  REDUCE_ordinal(garbled?_fun: [message -> ordinal],
+                 valid?_fun: [[T, message] -> ordinal]):
+        [message -> ordinal] =
+      LAMBDA (message_adtvar: message):
+        LET red: [message -> ordinal] =
+              REDUCE_ordinal(garbled?_fun, valid?_fun)
+          IN
+          CASES message_adtvar
+            OF garbled: garbled?_fun(message_adtvar),
+               valid(valid1_var): valid?_fun(valid1_var, message_adtvar)
+            ENDCASES;
+ END message_adt
+
+message_adt_map[T: TYPE+, T1: TYPE+]: THEORY
+ BEGIN
+  ASSUMING
+   T_TCC1: ASSUMPTION EXISTS (x: T): TRUE;
+
+   T1_TCC1: ASSUMPTION EXISTS (x: T1): TRUE;
+  ENDASSUMING
+
+  IMPORTING message_adt
+
+  map(f: [T -> T1])(a: message[T]):  message[T1] =
+      CASES a OF garbled: garbled, valid(valid1_var): valid(f(valid1_var))
+        ENDCASES;
+
+  map(f: [T -> T1], a: message[T]):  message[T1] =
+      CASES a OF garbled: garbled, valid(valid1_var): valid(f(valid1_var))
+        ENDCASES;
+
+  every(R: [[T, T1] -> boolean])(x: message[T], y: message[T1]):  boolean =
+      garbled?(x) AND garbled?(y) OR
+       valid?(x) AND valid?(y) AND R(value(x), value(y));
+ END message_adt_map
+
+message_adt_reduce[T: TYPE+, range: TYPE]: THEORY
+ BEGIN
+  ASSUMING
+   T_TCC1: ASSUMPTION EXISTS (x: T): TRUE;
+  ENDASSUMING
+
+  IMPORTING message_adt[T]
+
+  reduce(garbled?_fun: range, valid?_fun: [T -> range]):
+        [message[T] -> range] =
+      LAMBDA (message_adtvar: message[T]):
+        LET red: [message[T] -> range] = reduce(garbled?_fun, valid?_fun)
+          IN
+          CASES message_adtvar
+            OF garbled: garbled?_fun,
+               valid(valid1_var): valid?_fun(valid1_var)
+            ENDCASES;
+
+  REDUCE(garbled?_fun: [message[T] -> range],
+         valid?_fun: [[T, message[T]] -> range]):
+        [message[T] -> range] =
+      LAMBDA (message_adtvar: message[T]):
+        LET red: [message[T] -> range] = REDUCE(garbled?_fun, valid?_fun)
+          IN
+          CASES message_adtvar
+            OF garbled: garbled?_fun(message_adtvar),
+               valid(valid1_var): valid?_fun(valid1_var, message_adtvar)
+            ENDCASES;
+ END message_adt_reduce
