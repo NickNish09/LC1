@@ -95,6 +95,7 @@ binsertion_permutation : LEMMA FORALL (v): permutations(v, binsertionsort(v))
 % Conclude that binsertionsort computes a sorted sequence.
 % Tip: this is a very easy question. 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 binsertion_sorts : LEMMA  FORALL (v): sorted(binsertionsort(v))
 
 binsertionsort_works : LEMMA
