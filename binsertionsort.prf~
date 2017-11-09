@@ -2034,7 +2034,112 @@
                           nil))
                         nil))
                       nil)
-                     ("2" (postpone) nil nil) ("3" (postpone) nil nil)
+                     ("2" (inst -2 "x!1" "x!2" "1")
+                      (("2"
+                        (inst -3
+                         "insert?(x!1`seq(x!2), delete(x!1, x!2), 1)"
+                         "1 + x!2")
+                        (("2" (lemma "permutations_equiv")
+                          (("2" (flatten)
+                            (("2" (hide -1 -2)
+                              (("2"
+                                (expand "transitive?")
+                                (("2"
+                                  (inst
+                                   -1
+                                   "x!1"
+                                   "insert?(x!1`seq(x!2), delete(x!1, x!2), 1)"
+                                   "binsertionsort_aux(insert?
+                                      (x!1`seq(x!2), delete(x!1, x!2), 1))
+                                     (1 + x!2)")
+                                  (("2"
+                                    (split)
+                                    (("1" (propax) nil nil)
+                                     ("2" (propax) nil nil)
+                                     ("3"
+                                      (split)
+                                      (("1" (propax) nil nil)
+                                       ("2" (grind) nil nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil))
+                        nil))
+                      nil)
+                     ("3" (inst -2 "x!1" "x!2" "floor((x!2 - 1) / 2)")
+                      (("1"
+                        (inst -3
+                         "insert?(x!1`seq(x!2), delete(x!1, x!2),
+                           floor((x!2 - 1) / 2))" "1 + x!2")
+                        (("1" (lemma "permutations_equiv")
+                          (("1" (flatten)
+                            (("1" (hide -1 -2)
+                              (("1"
+                                (expand "transitive?")
+                                (("1"
+                                  (inst
+                                   -1
+                                   "x!1"
+                                   " insert?(x!1`seq(x!2), delete(x!1, x!2),
+                           floor((x!2 - 1) / 2))"
+                                   " binsertionsort_aux(insert?
+                                      (x!1`seq(x!2),
+                                       delete(x!1, x!2),
+                                       floor((x!2 - 1) / 2)))
+                                     (1 + x!2)")
+                                  (("1"
+                                    (split)
+                                    (("1" (propax) nil nil)
+                                     ("2" (propax) nil nil)
+                                     ("3"
+                                      (split)
+                                      (("1" (propax) nil nil)
+                                       ("2" (grind) nil nil))
+                                      nil))
+                                    nil)
+                                   ("2"
+                                    (typepred "x!2")
+                                    (("2"
+                                      (typepred "floor((x!2 - 1) / 2)")
+                                      (("2"
+                                        (expand "finseq_appl")
+                                        (("2"
+                                          (split)
+                                          (("1"
+                                            (lemma
+                                             "permutations_equiv")
+                                            (("1"
+                                              (flatten)
+                                              (("1"
+                                                (hide -1 -2)
+                                                (("1"
+                                                  (expand
+                                                   "transitive?")
+                                                  (("1"
+                                                    (assert)
+                                                    nil
+                                                    nil))
+                                                  nil))
+                                                nil))
+                                              nil))
+                                            nil)
+                                           ("2" (postpone) nil nil))
+                                          nil))
+                                        nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil)
+                         ("2" (postpone) nil nil))
+                        nil)
+                       ("2" (postpone) nil nil))
+                      nil)
                      ("4" (postpone) nil nil) ("5" (postpone) nil nil)
                      ("6" (postpone) nil nil))
                     nil))
