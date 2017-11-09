@@ -1977,6 +1977,122 @@
     (pred type-eq-decl nil defined_types nil))
    shostak))
  (bs_aux_perm 0
+  (coisinha3 "Prova?" 3719055590
+   ("" (measure-induct+ "length(v)-j" ("v" "j"))
+    (("" (expand "binsertionsort_aux" 1)
+      (("" (lift-if)
+        (("" (prop)
+          (("1" (grind) nil nil)
+           ("2" (lemma "delete_insert_same_permutes")
+            (("2" (expand "finseq_appl")
+              (("2"
+                (inst -1 "x!1" "x!2"
+                 "bin_search(x!1)(x!1`seq(x!2))(0, x!2 - 1)")
+                (("1" (assert) nil nil) ("2" (assert) nil nil)) nil))
+              nil))
+            nil)
+           ("3" (lemma "delete_insert_same_permutes")
+            (("3" (expand "finseq_appl")
+              (("3" (expand "bin_search")
+                (("3" (lift-if)
+                  (("3" (prop)
+                    (("1" (inst -3 "x!1" "x!2" "0")
+                      (("1"
+                        (inst -4
+                         "insert? (x!1`seq(x!2), delete(x!1, x!2), 0)"
+                         "1 + x!2")
+                        (("1" (lemma "permutations_equiv")
+                          (("1" (flatten)
+                            (("1" (hide -1 -2)
+                              (("1"
+                                (expand "transitive?")
+                                (("1"
+                                  (inst
+                                   -1
+                                   "x!1"
+                                   "insert?(x!1`seq(x!2), delete(x!1, x!2), 0)"
+                                   "binsertionsort_aux(insert?
+                                       (x!1`seq(x!2), delete(x!1, x!2), 0))
+                                      (1 + x!2)")
+                                  (("1"
+                                    (split)
+                                    (("1" (propax) nil nil)
+                                     ("2" (propax) nil nil)
+                                     ("3"
+                                      (split)
+                                      (("1" (propax) nil nil)
+                                       ("2"
+                                        (hide 2 3)
+                                        (("2" (grind) nil nil))
+                                        nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil))
+                        nil))
+                      nil)
+                     ("2" (inst -2 "x!1" "x!2" "1")
+                      (("2"
+                        (inst -3
+                         "insert?(x!1`seq(x!2), delete(x!1, x!2), 1)"
+                         "1 + x!2")
+                        (("2" (lemma "permutations_equiv")
+                          (("2" (flatten)
+                            (("2" (hide -1 -2)
+                              (("2"
+                                (expand "transitive?")
+                                (("2"
+                                  (inst
+                                   -1
+                                   "x!1"
+                                   "insert?(x!1`seq(x!2), delete(x!1, x!2), 1)"
+                                   "binsertionsort_aux(insert?
+                                      (x!1`seq(x!2), delete(x!1, x!2), 1))
+                                     (1 + x!2)")
+                                  (("2"
+                                    (split)
+                                    (("1" (propax) nil nil)
+                                     ("2" (propax) nil nil)
+                                     ("3"
+                                      (split)
+                                      (("1" (propax) nil nil)
+                                       ("2" (postpone) nil nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil))
+                        nil))
+                      nil)
+                     ("3" (postpone) nil nil) ("4" (postpone) nil nil)
+                     ("5" (postpone) nil nil) ("6" (postpone) nil nil))
+                    nil))
+                  nil))
+                nil))
+              nil))
+            nil))
+          nil))
+        nil))
+      nil))
+    nil)
+   nil shostak)
+  (coisinha2 "prova da" 3718969548
+   ("" (measure-induct+ "length(v)-j" ("v" "j"))
+    (("" (expand "binsertionsort_aux" 1)
+      (("" (lift-if)
+        (("" (prop)
+          (("1" (grind) nil nil) ("2" (postpone) nil nil)
+           ("3" (postpone) nil nil))
+          nil))
+        nil))
+      nil))
+    nil)
+   nil shostak)
   (bs_aux_perm-1 nil 3716408602
    ("" (measure-induct+ "length(v)-j" ("v" "j"))
     (("" (postpone) nil nil)) nil)
