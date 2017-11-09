@@ -2140,8 +2140,149 @@
                         nil)
                        ("2" (assert) nil nil))
                       nil)
-                     ("4" (postpone) nil nil) ("5" (postpone) nil nil)
-                     ("6" (postpone) nil nil))
+                     ("4" (inst -3 "x!1" "x!2" "0")
+                      (("4"
+                        (inst -4
+                         "insert?(x!1`seq(x!2), delete(x!1, x!2), 0)"
+                         "1 + x!2")
+                        (("4" (lemma "permutations_equiv")
+                          (("4" (flatten)
+                            (("4" (hide -1 -2)
+                              (("4"
+                                (expand "transitive?")
+                                (("4"
+                                  (inst
+                                   -1
+                                   "x!1"
+                                   "insert?(x!1`seq(x!2), delete(x!1, x!2), 0)"
+                                   "binsertionsort_aux(insert?
+                                      (x!1`seq(x!2), delete(x!1, x!2), 0))
+                                     (1 + x!2)")
+                                  (("4"
+                                    (split -1)
+                                    (("1" (propax) nil nil)
+                                     ("2" (propax) nil nil)
+                                     ("3"
+                                      (split)
+                                      (("1" (propax) nil nil)
+                                       ("2" (grind) nil nil))
+                                      nil))
+                                    nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil))
+                        nil))
+                      nil)
+                     ("5"
+                      (inst -2 "x!1" "x!2" "bin_search
+                                       (x!1)
+                                       (x!1`seq(x!2))
+                                       (0, floor((x!2 - 1) / 2) - 1)")
+                      (("1"
+                        (inst -3
+                         " insert?(x!1`seq(x!2), delete(x!1, x!2),
+                           bin_search(x!1)
+                                     (x!1`seq(x!2))
+                                     (0, floor((x!2 - 1) / 2) - 1))"
+                         "1 + x!2")
+                        (("1" (lemma "permutations_equiv")
+                          (("1" (flatten)
+                            (("1" (hide -1 -2)
+                              (("1"
+                                (expand "transitive?")
+                                (("1"
+                                  (inst
+                                   -1
+                                   "x!1"
+                                   "insert?(x!1`seq(x!2), delete(x!1, x!2),
+                            bin_search(x!1)
+                                      (x!1`seq(x!2))
+                                      (0, floor((x!2 - 1) / 2) - 1))"
+                                   "binsertionsort_aux(insert?
+                                      (x!1`seq(x!2),
+                                       delete(x!1, x!2),
+                                       bin_search
+                                       (x!1)
+                                       (x!1`seq(x!2))
+                                       (0, floor((x!2 - 1) / 2) - 1)))
+                                     (1 + x!2)")
+                                  (("1"
+                                    (split -1)
+                                    (("1" (propax) nil nil)
+                                     ("2" (propax) nil nil)
+                                     ("3"
+                                      (split)
+                                      (("1" (propax) nil nil)
+                                       ("2" (grind) nil nil))
+                                      nil))
+                                    nil)
+                                   ("2" (assert) nil nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil)
+                         ("2" (assert) nil nil))
+                        nil)
+                       ("2" (assert) nil nil) ("3" (assert) nil nil))
+                      nil)
+                     ("6"
+                      (inst -1 "x!1" "x!2" " bin_search
+                                       (x!1)
+                                       (x!1`seq(x!2))
+                                       (1 + floor((x!2 - 1) / 2), x!2 - 1)")
+                      (("1"
+                        (inst -2
+                         "insert?(x!1`seq(x!2), delete(x!1, x!2),
+                           bin_search(x!1)
+                                     (x!1`seq(x!2))
+                                     (1 + floor((x!2 - 1) / 2), x!2 - 1))"
+                         "1 + x!2")
+                        (("1" (lemma "permutations_equiv")
+                          (("1" (flatten)
+                            (("1" (hide -1 -2)
+                              (("1"
+                                (expand "transitive?")
+                                (("1"
+                                  (inst
+                                   -1
+                                   "x!1"
+                                   "insert?(x!1`seq(x!2), delete(x!1, x!2),
+                           bin_search(x!1)
+                                     (x!1`seq(x!2))
+                                     (1 + floor((x!2 - 1) / 2), x!2 - 1))"
+                                   "binsertionsort_aux(insert?
+                                      (x!1`seq(x!2),
+                                       delete(x!1, x!2),
+                                       bin_search
+                                       (x!1)
+                                       (x!1`seq(x!2))
+                                       (1 + floor((x!2 - 1) / 2), x!2 - 1)))
+                                     (1 + x!2)")
+                                  (("1"
+                                    (split -1)
+                                    (("1" (propax) nil nil)
+                                     ("2" (propax) nil nil)
+                                     ("3"
+                                      (split)
+                                      (("1" (propax) nil nil)
+                                       ("2" (grind) nil nil))
+                                      nil))
+                                    nil)
+                                   ("2" (assert) nil nil)
+                                   ("3" (assert) nil nil))
+                                  nil))
+                                nil))
+                              nil))
+                            nil))
+                          nil)
+                         ("2" (assert) nil nil) ("3" (assert) nil nil))
+                        nil)
+                       ("2" (assert) nil nil) ("3" (assert) nil nil)
+                       ("4" (assert) nil nil))
+                      nil))
                     nil))
                   nil))
                 nil))
@@ -2151,7 +2292,73 @@
         nil))
       nil))
     nil)
-   nil shostak)
+   ((pred type-eq-decl nil defined_types nil)
+    (well_founded? const-decl "bool" orders nil)
+    (int_minus_int_is_int application-judgement "int" integers nil)
+    (measure_induction formula-decl nil measure_induction nil)
+    (nat nonempty-type-eq-decl nil naturalnumbers nil)
+    (below type-eq-decl nil nat_types nil)
+    (number nonempty-type-decl nil numbers nil)
+    (boolean nonempty-type-decl nil booleans nil)
+    (number_field_pred const-decl "[number -> boolean]" number_fields
+     nil)
+    (number_field nonempty-type-from-decl nil number_fields nil)
+    (real_pred const-decl "[number_field -> boolean]" reals nil)
+    (real nonempty-type-from-decl nil reals nil)
+    (rational_pred const-decl "[real -> boolean]" rationals nil)
+    (rational nonempty-type-from-decl nil rationals nil)
+    (integer_pred const-decl "[rational -> boolean]" integers nil)
+    (int nonempty-type-eq-decl nil integers nil)
+    (bool nonempty-type-eq-decl nil booleans nil)
+    (>= const-decl "bool" reals nil)
+    (finite_sequence type-eq-decl nil finite_sequences nil)
+    (< const-decl "bool" reals nil)
+    (naturalnumber type-eq-decl nil naturalnumbers nil)
+    (numfield nonempty-type-eq-decl nil number_fields nil)
+    (- const-decl "[numfield, numfield -> numfield]" number_fields nil)
+    (wf_nat formula-decl nil naturalnumbers nil)
+    (binsertionsort_aux def-decl
+     "{w: finite_sequence[nat] | length(w) = length(v)}" binsertionsort
+     nil)
+    (= const-decl "[T, T -> boolean]" equalities nil)
+    (permutations const-decl "bool" sorting_seq nil)
+    (IMPLIES const-decl "[bool, bool -> bool]" booleans nil)
+    (nnint_plus_nnint_is_nnint application-judgement "nonneg_int"
+     integers nil)
+    (delete const-decl "finseq" seq_extras "structures/")
+    (insert? const-decl "finseq" seq_extras "structures/")
+    (finseq type-eq-decl nil finite_sequences nil)
+    (transitive? const-decl "bool" relations nil)
+    (int_plus_int_is_int application-judgement "int" integers nil)
+    (permutations_equiv formula-decl nil sorting_seq nil)
+    (NOT const-decl "[bool -> bool]" booleans nil)
+    (real_le_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (/ const-decl "[numfield, nznum -> numfield]" number_fields nil)
+    (nznum nonempty-type-eq-decl nil number_fields nil)
+    (/= const-decl "boolean" notequal nil)
+    (floor const-decl "{i | i <= x & x < i + 1}" floor_ceil nil)
+    (AND const-decl "[bool, bool -> bool]" booleans nil)
+    (integer nonempty-type-from-decl nil integers nil)
+    (rat_div_nzrat_is_rat application-judgement "rat" rationals nil)
+    (delete_insert_same_permutes formula-decl nil sorting_seq nil)
+    (real_gt_is_strict_total_order name-judgement
+     "(strict_total_order?[real])" real_props nil)
+    (real_ge_is_total_order name-judgement "(total_order?[real])"
+     real_props nil)
+    (real_lt_is_strict_total_order name-judgement
+     "(strict_total_order?[real])" real_props nil)
+    (bin_search def-decl "upto[j + 1]" binsertionsort nil)
+    (upto nonempty-type-eq-decl nil nat_types nil)
+    (+ const-decl "[numfield, numfield -> numfield]" number_fields nil)
+    (<= const-decl "bool" reals nil) (> const-decl "bool" reals nil)
+    (x!1 skolem-const-decl "{v | length(v) >= 2}" binsertionsort nil)
+    (x!2 skolem-const-decl "below[length(x!1)]" binsertionsort nil)
+    (finseq_appl const-decl "[below[length(fs)] -> T]" finite_sequences
+     nil)
+    (posint_plus_nnint_is_posint application-judgement "posint"
+     integers nil))
+   shostak)
   (coisinha2 "prova da" 3718969548
    ("" (measure-induct+ "length(v)-j" ("v" "j"))
     (("" (expand "binsertionsort_aux" 1)
